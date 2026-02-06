@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'detector',
 ]
 
 MIDDLEWARE = [
@@ -86,6 +87,10 @@ DATABASES = {
         'PORT': os.getenv('DB_PORT'),
     }
 }
+
+#Media
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 # Password validation

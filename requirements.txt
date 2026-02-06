@@ -1,0 +1,7 @@
+django
+ultralytics
+opencv-python-headless
+numpy
+scikit-image
+scipy
+pillow
