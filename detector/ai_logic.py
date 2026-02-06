@@ -8,64 +8,53 @@ from django.conf import settings
 
 class CrackDetector:
     def __init__(self):
-        # Path to your model inside the static folder
-        self.model_path = os.path.join(settings.BASE_DIR, 'detector', 'static', 'detector', 'models', 'crack_model.pt')
-        self.model = YOLO(self.model_path)
+        # Load both models
+        self.coin_model_path = os.path.join(settings.BASE_DIR, 'detector', 'static', 'detector', 'models', 'coin_model.pt')
+        self.crack_model_path = os.path.join(settings.BASE_DIR, 'detector', 'static', 'detector', 'models', 'crack_model.pt')
         
+        self.coin_model = YOLO(self.coin_model_path)
+        self.crack_model = YOLO(self.crack_model_path)
+        self.COIN_DIAMETER_MM = 18.51 # Standard measurement
+
     def process_image(self, input_path, output_path):
-        """
-        Processes the image, detects cracks, measures width, 
-        and saves the visual result.
-        """
         image = cv2.imread(input_path)
-        if image is None:
-            return None, "Error: Could not read image."
-
+        if image is None: return None, "Error: Could not read image."
         vis = image.copy()
+
+        # 1. Coin Detection for Calibration
+        coin_results = self.coin_model(image)[0]
+        if len(coin_results.boxes) == 0:
+            return None, "Reference coin not found. Calibration failed."
         
-        # 1. Run YOLOv8-segmentation
-        results = self.model(image)[0]
+        # Calculate mm per pixel
+        box = coin_results.boxes.xyxy[0].cpu().numpy().astype(int)
+        w, h = box[2] - box[0], box[3] - box[1]
+        mm_per_pixel = self.COIN_DIAMETER_MM / ((w + h) / 2)
 
-        if results.masks is None:
-            return None, "No cracks detected."
+        # 2. Crack Segmentation
+        crack_results = self.crack_model(image)[0]
+        if crack_results.masks is None:
+            return None, "No cracks detected in the image."
 
-        # 2. Extract Mask
-        mask = results.masks.data[0].cpu().numpy()
-        mask = (mask > 0.5).astype(np.uint8)
+        mask = crack_results.masks.data[0].cpu().numpy()
+        mask = cv2.resize((mask > 0.5).astype(np.uint8), (image.shape[1], image.shape[0]), interpolation=cv2.INTER_NEAREST)
 
-        # Resize mask to original image size
-        mask = cv2.resize(mask, (image.shape[1], image.shape[0]), interpolation=cv2.INTER_NEAREST)
-
-        # 3. Measurement Logic (Skeletonization)
+        # 3. Measurement (Skeletonization)
         skeleton = skeletonize(mask)
         distance = distance_transform_edt(mask)
+        width_mm = (2 * distance[skeleton]) * mm_per_pixel # Convert to mm
 
-        # width_px = 2 * distance at skeleton points
-        width_px = 2 * distance[skeleton]
-        
-        if len(width_px) == 0:
-            return None, "Width could not be calculated."
-
-        # For this version, we are using pixel width. 
-        # (We can add coin-calibration logic in the next step!)
-        avg_width = np.mean(width_px)
-        max_width = np.max(width_px)
-
-        # 4. Create Visualization Overlay
+        # 4. Visualization
         crack_overlay = np.zeros_like(vis)
-        crack_overlay[:, :, 2] = mask * 255  # Red color for crack
+        crack_overlay[:, :, 2] = mask * 255 # Red Crack
         vis = cv2.addWeighted(vis, 1.0, crack_overlay, 0.5, 0)
+        cv2.rectangle(vis, (box[0], box[1]), (box[2], box[3]), (0, 255, 255), 3) # Yellow Coin Box
 
-        # Draw results on image
-        cv2.putText(vis, f"Max Width: {max_width:.2f} px", (40, 50), 
-                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-        cv2.putText(vis, f"Avg Width: {avg_width:.2f} px", (40, 100), 
-                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+        avg_w = np.mean(width_mm)
+        max_w = np.max(width_mm)
 
-        # 5. Save and Return
+        # Draw UI text
+        cv2.putText(vis, f"Max: {max_w:.2f}mm", (40, 60), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 255, 0), 3)
         cv2.imwrite(output_path, vis)
         
-        return {
-            'max_width': round(max_width, 2),
-            'avg_width': round(avg_width, 2),
-        }, None
+        return {'max_width': round(max_w, 2), 'avg_width': round(avg_w, 2), 'scale': round(mm_per_pixel, 4)}, None
