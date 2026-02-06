@@ -76,6 +76,14 @@ class CrackDetector:
         # Draw the coin reference box in Yellow
         cv2.rectangle(vis, (box[0], box[1]), (box[2], box[3]), (0, 255, 255), 2)
 
+        # Resize for web display (e.g., max width 1280px) to prevent lag
+        h, w = vis.shape[:2]
+        max_width = 720
+        if w > max_width:
+            scale_ratio = max_width / w
+            new_h = int(h * scale_ratio)
+            vis = cv2.resize(vis, (max_width, new_h), interpolation=cv2.INTER_AREA)
+
         cv2.imwrite(output_path, vis)
         
         return {

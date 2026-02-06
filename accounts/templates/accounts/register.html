@@ -1,0 +1,36 @@
+{% extends 'detector/base.html' %}
+
+{% block title %}Create Account | CrackAI{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-center py-20 px-4">
+    <div class="glass p-8 rounded-2xl w-full max-w-md shadow-2xl border-t-4 border-emerald-500">
+        <div class="text-center mb-8">
+            <h1 class="text-2xl font-bold text-white">Create Account</h1>
+            <p class="text-slate-400 text-sm">Join CrackAI to start analyzing</p>
+        </div>
+
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+            
+            {% for field in form %}
+            <div class="space-y-1">
+                <label class="text-xs font-bold text-slate-400 uppercase ml-1">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <p class="text-red-400 text-xs mt-1">{{ field.errors.0 }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-emerald-600/20 mt-4">
+                Create Account
+            </button>
+        </form>
+
+        <div class="mt-6 text-center border-t border-slate-700/50 pt-4">
+            <p class="text-slate-400 text-sm">Already have an account? <a href="{% url 'login' %}" class="text-blue-400 hover:text-blue-300 font-semibold transition">Login</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

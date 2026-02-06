@@ -6,3 +6,6 @@ db.sqlite3
 .env
 
 media/
+
+detector/static/detector/models/crack_model.pt
+detector/static/detector/models/coin_model.pt

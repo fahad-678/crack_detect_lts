@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'detector',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -128,3 +129,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+LOGIN_REDIRECT_URL = 'index'  # Redirect here after login
+LOGOUT_REDIRECT_URL = 'login' # Redirect here after logout
+LOGIN_URL = 'login'           # Redirect here if unauthorized

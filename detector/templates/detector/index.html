@@ -1,102 +1,161 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CrackAI | YOLOv8 Segmentation</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        body { background-color: #0f172a; }
-        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
-        .result-card { transition: transform 0.3s ease; }
-        .result-card:hover { transform: translateY(-5px); }
-    </style>
-</head>
-<body class="text-slate-200 min-h-screen font-sans">
+{% extends 'detector/base.html' %}
 
-    <nav class="p-6 border-b border-slate-800 flex justify-between items-center glass sticky top-0 z-50">
-        <div class="flex items-center space-x-3">
-            <div class="bg-blue-600 p-2 rounded-lg">
-                <i class="fas fa-microscope text-white"></i>
-            </div>
-            <span class="text-xl font-bold tracking-tight">Crack<span class="text-blue-500">AI</span></span>
+{% block title %}Batch Processing | CrackAI{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto p-6 space-y-8">
+    
+    <div class="flex justify-between items-end">
+        <div>
+            <h1 class="text-3xl font-bold text-white">Dashboard</h1>
+            <p class="text-slate-400 text-sm mt-1">Manage and analyze your structural images</p>
         </div>
-        <div class="text-sm text-slate-400">YOLOv8-Segmentation System</div>
-    </nav>
-
-    <main class="max-w-6xl mx-auto p-6 space-y-8">
-        
-        <div class="text-center py-10">
-            <h1 class="text-4xl font-extrabold text-white mb-4">Concrete Crack Analysis</h1>
-            <p class="text-slate-400 max-w-2xl mx-auto">Upload an image of a concrete surface to detect cracks and calculate precise structural measurements using deep learning.</p>
+        <div id="status-counter" class="text-sm font-mono text-blue-400 bg-blue-500/10 px-3 py-1 rounded-full border border-blue-500/20">
+            System Ready
         </div>
+    </div>
 
-        <section class="glass rounded-2xl p-8 shadow-2xl">
-            <form method="post" enctype="multipart/form-data" class="space-y-6">
-                {% csrf_token %}
-                <div class="flex items-center justify-center w-full">
-                    <label class="flex flex-col items-center justify-center w-full h-64 border-2 border-slate-700 border-dashed rounded-xl cursor-pointer bg-slate-800/50 hover:bg-slate-800 hover:border-blue-500 transition-all">
-                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                            <i class="fas fa-cloud-upload-alt text-4xl text-blue-500 mb-4"></i>
-                            <p class="mb-2 text-sm text-slate-300"><span class="font-semibold">Click to upload</span> or drag and drop</p>
-                            <p class="text-xs text-slate-500">JPG, PNG or JPEG (Max 10MB)</p>
+    <section class="glass rounded-2xl p-8 shadow-2xl">
+        <form id="upload-form" class="space-y-6">
+            {% csrf_token %}
+            <div class="flex items-center justify-center w-full">
+                <label class="flex flex-col items-center justify-center w-full h-40 border-2 border-slate-700 border-dashed rounded-xl cursor-pointer bg-slate-800/50 hover:bg-slate-800 hover:border-blue-500 transition-all group">
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                        <div class="p-3 bg-slate-800 rounded-full mb-3 group-hover:bg-blue-600/20 transition-colors">
+                            <i class="fas fa-cloud-upload-alt text-2xl text-blue-500"></i>
                         </div>
-                        <input type="file" name="image" class="hidden" onchange="form.submit()" required />
-                    </label>
-                </div>
-            </form>
-        </section>
+                        <p class="mb-1 text-sm text-slate-300"><span class="font-semibold">Click to upload</span> multiple images</p>
+                        <p class="text-xs text-slate-500">Supported: JPG, PNG</p>
+                    </div>
+                    <input type="file" id="file-input" name="image" class="hidden" multiple accept="image/*" />
+                </label>
+            </div>
+        </form>
+    </section>
 
-        {% if error %}
-        <div class="bg-red-500/10 border border-red-500 text-red-500 p-4 rounded-xl flex items-center">
-            <i class="fas fa-exclamation-circle mr-3"></i> {{ error }}
-        </div>
-        {% endif %}
+    <div id="results-grid" class="space-y-8 pb-10"></div>
+</div>
+{% endblock %}
 
-        {% if results %}
-        <section class="grid grid-cols-1 md:grid-cols-2 gap-8 animate-fade-in">
+{% block scripts %}
+<script>
+    const fileInput = document.getElementById('file-input');
+    const resultsGrid = document.getElementById('results-grid');
+    const statusCounter = document.getElementById('status-counter');
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    fileInput.addEventListener('change', async (e) => {
+        const files = Array.from(e.target.files);
+        if (files.length === 0) return;
+
+        // Clear previous if you want, or append. Here we append to top.
+        // resultsGrid.innerHTML = ''; 
+
+        let processedCount = 0;
+        statusCounter.innerText = `Processing 0/${files.length} images...`;
+
+        // Process one by one
+        for (const [index, file] of files.entries()) {
             
-            <div class="space-y-4">
-                <h3 class="text-lg font-medium px-2">Original Image</h3>
-                <div class="glass rounded-xl overflow-hidden shadow-lg">
-                    <img src="{{ original_url }}" class="w-full h-auto object-cover" alt="Original">
+            // 1. Create a placeholder card for this image
+            const cardId = `card-${Date.now()}-${index}`;
+            const cardHTML = createLoadingCard(cardId, file.name);
+            resultsGrid.insertAdjacentHTML('afterbegin', cardHTML); // Add to top
+            
+            const cardElement = document.getElementById(cardId);
+
+            // 2. Upload and Process
+            try {
+                const formData = new FormData();
+                formData.append('image', file);
+
+                const response = await fetch('/api/process/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // 3. Replace loading card with result
+                    updateCardWithResult(cardElement, data);
+                } else {
+                    updateCardWithError(cardElement, data.error);
+                }
+
+            } catch (err) {
+                updateCardWithError(cardElement, "Network Error");
+            }
+
+            processedCount++;
+            statusCounter.innerText = `Processing ${processedCount}/${files.length} images...`;
+        }
+
+        statusCounter.innerText = `Completed ${files.length} images`;
+        fileInput.value = ''; // Reset input
+    });
+
+    function createLoadingCard(id, filename) {
+        return `
+        <div id="${id}" class="glass rounded-2xl p-6 fade-in border-l-4 border-slate-600">
+            <div class="flex items-center space-x-4 mb-4">
+                <div class="loader"></div>
+                <h3 class="text-lg font-medium text-slate-300">Analyzing: ${filename}</h3>
+            </div>
+            <div class="h-64 bg-slate-800/50 rounded-xl animate-pulse w-full"></div>
+        </div>`;
+    }
+
+    // Find this function in your script tag and update it
+function updateCardWithResult(card, data) {
+card.className = "glass rounded-2xl p-6 fade-in border-l-4 border-emerald-500";
+card.innerHTML = `
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="space-y-2">
+            <p class="text-xs text-slate-400 uppercase font-bold">Original</p>
+            <div class="bg-slate-900 rounded-lg flex items-center justify-center p-2">
+                <img src="${data.original_url}" class="rounded w-full h-auto max-h-96 object-contain">
+            </div>
+        </div>
+        <div class="space-y-2">
+            <p class="text-xs text-blue-400 uppercase font-bold">Analyzed</p>
+            <div class="bg-slate-900 rounded-lg flex items-center justify-center p-2 border border-blue-500/30">
+                <img src="${data.result_url}" class="rounded w-full h-auto max-h-96 object-contain">
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-3 gap-4 mt-6">
+        <div class="bg-slate-800/50 p-4 rounded-xl">
+            <p class="text-slate-500 text-xs uppercase font-bold">Max Width</p>
+            <p class="text-2xl font-bold text-white">${data.data.max_width} <span class="text-sm text-slate-500">mm</span></p>
+        </div>
+        <div class="bg-slate-800/50 p-4 rounded-xl">
+            <p class="text-slate-500 text-xs uppercase font-bold">Avg Width</p>
+            <p class="text-2xl font-bold text-white">${data.data.avg_width} <span class="text-sm text-slate-500">mm</span></p>
+        </div>
+        <div class="bg-slate-800/50 p-4 rounded-xl">
+            <p class="text-slate-500 text-xs uppercase font-bold">Scale</p>
+            <p class="text-2xl font-bold text-white">${data.data.scale} <span class="text-sm text-slate-500">mm/px</span></p>
+        </div>
+    </div>
+`;
+}
+
+    function updateCardWithError(card, errorMessage) {
+        card.className = "glass rounded-2xl p-6 fade-in border-l-4 border-red-500";
+        card.innerHTML = `
+            <div class="flex items-center text-red-400">
+                <i class="fas fa-exclamation-circle text-2xl mr-3"></i>
+                <div>
+                    <h3 class="font-bold">Analysis Failed</h3>
+                    <p class="text-sm text-red-300/80">${errorMessage}</p>
                 </div>
             </div>
-
-            <div class="space-y-4">
-                <h3 class="text-lg font-medium px-2 text-blue-400">Analysis Result</h3>
-                <div class="glass rounded-xl overflow-hidden shadow-lg border-blue-500/30 border">
-                    <img src="{{ result_url }}" class="w-full h-auto object-cover" alt="Result">
-                </div>
-            </div>
-
-            <div class="md:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-6">
-                <div class="glass p-6 rounded-2xl result-card border-l-4 border-blue-500">
-                    <p class="text-slate-400 text-sm uppercase font-bold tracking-wider">Average Width</p>
-                    <h2 class="text-3xl font-black text-white mt-1">{{ results.avg_width }} <span class="text-sm font-normal text-slate-500">px</span></h2>
-                </div>
-                <div class="glass p-6 rounded-2xl result-card border-l-4 border-emerald-500">
-                    <p class="text-slate-400 text-sm uppercase font-bold tracking-wider">Maximum Width</p>
-                    <h2 class="text-3xl font-black text-white mt-1">{{ results.max_width }} <span class="text-sm font-normal text-slate-500">px</span></h2>
-                </div>
-                <div class="glass p-6 rounded-2xl result-card border-l-4 border-yellow-500">
-                    <p class="text-slate-400 text-sm uppercase font-bold tracking-wider">Scale Factor</p>
-                    <h2 class="text-3xl font-black text-white mt-1">{{ results.scale }} <span class="text-sm font-normal text-slate-500">mm/px</span></h2>
-                </div>
-                <div class="glass p-6 rounded-2xl result-card border-l-4 border-purple-500">
-                    <p class="text-slate-400 text-sm uppercase font-bold tracking-wider">Detection Status</p>
-                    <h2 class="text-2xl font-black text-white mt-1 uppercase text-emerald-400">Success</h2>
-                </div>
-            </div>
-        </section>
-        {% endif %}
-
-    </main>
-
-    <footer class="text-center py-10 text-slate-500 text-sm">
-        &copy; 2026 CrackAI System - Computer Science Project
-    </footer>
-
-</body>
-</html>
+        `;
+    }
+</script>
+{% endblock %}
