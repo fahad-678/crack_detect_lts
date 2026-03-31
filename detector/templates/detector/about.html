@@ -1,0 +1,94 @@
+{% extends 'detector/base.html' %}
+
+{% block title %}CrackAI | About the Project{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-20">
+
+    <div class="text-center max-w-3xl mx-auto fade-in">
+        <h1 class="text-4xl font-extrabold text-white mb-4">About CrackAI</h1>
+        <p class="text-lg text-slate-400">Bridging the gap between Advanced Computer Vision and Civil Engineering.</p>
+    </div>
+
+    <section class="fade-in" style="animation-delay: 0.1s;">
+        <div class="glass p-8 md:p-12 rounded-3xl border border-slate-700 relative overflow-hidden">
+            <div class="absolute top-0 right-0 -mt-10 -mr-10 text-blue-500/10">
+                <i class="fas fa-microchip text-9xl"></i>
+            </div>
+            
+            <div class="relative z-10 max-w-3xl">
+                <h2 class="text-3xl font-bold text-white mb-6">The Project Purpose</h2>
+                <p class="text-slate-300 leading-relaxed mb-6">
+                    The structural integrity of concrete infrastructure is traditionally monitored through manual visual inspections. This process is not only incredibly slow and dangerous but also highly subjective. Two different inspectors might measure the same crack and record different widths, leading to inconsistent safety protocols.
+                </p>
+                <p class="text-slate-300 leading-relaxed">
+                    <strong>CrackAI</strong> was developed to eliminate human error. By leveraging the YOLOv11 deep learning architecture alongside mathematical skeletonization techniques, this system provides objective, pixel-perfect measurements. By instantly cross-referencing these measurements with the <strong>ACI 224R-01</strong> standards, the system turns raw images into actionable safety data in milliseconds.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="fade-in" style="animation-delay: 0.2s;">
+        <h2 class="text-2xl font-bold text-white mb-8 flex items-center justify-center md:justify-start">
+            <i class="fas fa-user-astronaut text-blue-500 mr-3"></i> Lead Developer
+        </h2>
+        
+        <div class="glass p-8 rounded-3xl border-t-4 border-blue-500 flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-8">
+            
+            <div class="flex-shrink-0">
+                <div class="w-32 h-32 bg-slate-800 rounded-full border-4 border-slate-700 flex items-center justify-center shadow-xl shadow-blue-900/20">
+                    <i class="fas fa-code text-5xl text-blue-400"></i>
+                </div>
+            </div>
+
+            <div class="text-center md:text-left flex-1">
+                <h3 class="text-3xl font-bold text-white mb-1">Fahad</h3>
+                <p class="text-blue-400 font-medium mb-4">Software Engineer & AI Researcher</p>
+                
+                <p class="text-slate-300 leading-relaxed mb-6 text-sm md:text-base">
+                    Currently pursuing a Bachelor of Science in Computer Science (BSCS) at <strong>COMSATS University Islamabad, Wah Campus</strong> (Class of 2026). With a strong professional background serving as an Associate Software Engineer, this project was built to demonstrate the practical, high-impact intersection of web architecture and applied artificial intelligence.
+                </p>
+                
+                <div class="flex flex-wrap gap-3 justify-center md:justify-start">
+                    <span class="bg-slate-800 text-slate-300 px-3 py-1 rounded-full text-xs font-bold border border-slate-700"><i class="fas fa-graduation-cap mr-1 text-emerald-400"></i> BSCS</span>
+                    <span class="bg-slate-800 text-slate-300 px-3 py-1 rounded-full text-xs font-bold border border-slate-700"><i class="fas fa-university mr-1 text-blue-400"></i> COMSATS</span>
+                    <span class="bg-slate-800 text-slate-300 px-3 py-1 rounded-full text-xs font-bold border border-slate-700"><i class="fas fa-laptop-code mr-1 text-purple-400"></i> Full-Stack AI</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="fade-in" style="animation-delay: 0.3s;">
+        <h2 class="text-2xl font-bold text-white mb-8 flex items-center">
+            <i class="fas fa-layer-group text-blue-500 mr-3"></i> Technology Stack
+        </h2>
+        
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="glass p-6 rounded-2xl border border-slate-700 text-center hover:bg-slate-800 transition-colors">
+                <i class="fab fa-python text-4xl text-blue-400 mb-3"></i>
+                <h3 class="text-white font-bold">Django & Python</h3>
+                <p class="text-xs text-slate-400 mt-2">Core backend routing and API management.</p>
+            </div>
+
+            <div class="glass p-6 rounded-2xl border border-slate-700 text-center hover:bg-slate-800 transition-colors">
+                <i class="fas fa-brain text-4xl text-purple-400 mb-3"></i>
+                <h3 class="text-white font-bold">YOLOv11</h3>
+                <p class="text-xs text-slate-400 mt-2">State-of-the-art segmentation and object detection.</p>
+            </div>
+
+            <div class="glass p-6 rounded-2xl border border-slate-700 text-center hover:bg-slate-800 transition-colors">
+                <i class="fas fa-border-all text-4xl text-emerald-400 mb-3"></i>
+                <h3 class="text-white font-bold">OpenCV & NumPy</h3>
+                <p class="text-xs text-slate-400 mt-2">Matrix transformations and skeletal geometric analysis.</p>
+            </div>
+
+            <div class="glass p-6 rounded-2xl border border-slate-700 text-center hover:bg-slate-800 transition-colors">
+                <i class="fab fa-css3-alt text-4xl text-sky-400 mb-3"></i>
+                <h3 class="text-white font-bold">Tailwind CSS</h3>
+                <p class="text-xs text-slate-400 mt-2">Responsive, utility-first styling for the modern web.</p>
+            </div>
+        </div>
+    </section>
+
+</div>
+{% endblock %}

@@ -1,0 +1,276 @@
+{% extends 'detector/base.html' %}
+
+{% block title %}CrackAI | Live Demo{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+    <section class="fade-in">
+        <div class="text-center mb-10">
+            <h1 class="text-4xl font-extrabold text-white mb-4">Live Analysis Demo</h1>
+            <p class="text-lg text-slate-400 max-w-2xl mx-auto">Select your analysis mode, adjust parameters if needed, and upload concrete surface images to test the YOLOv11 detection model.</p>
+        </div>
+        
+        <div class="flex justify-between items-end mb-6">
+            <div class="flex space-x-4 items-center">
+                <button id="download-csv-btn" class="hidden bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-lg shadow-emerald-600/20 transition-all">
+                    <i class="fas fa-file-csv mr-2"></i>Export CSV
+                </button>
+                <div id="status-counter" class="text-sm font-mono text-blue-400 bg-blue-500/10 px-3 py-1 rounded-full border border-blue-500/20">
+                    System Ready
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <label class="cursor-pointer relative group">
+                <input type="radio" name="analysis_mode" value="crack_only" class="peer sr-only" checked>
+                <div class="glass p-6 rounded-2xl border-2 border-slate-700 peer-checked:border-blue-500 peer-checked:bg-blue-900/20 transition-all text-center hover:border-blue-400">
+                    <i class="fas fa-search text-3xl text-blue-400 mb-3"></i>
+                    <h3 class="text-white font-bold text-lg">Crack Detection Only</h3>
+                    <p class="text-slate-400 text-sm mt-2">Locate and measure crack widths.</p>
+                </div>
+                <div class="absolute top-4 right-4 text-blue-500 opacity-0 peer-checked:opacity-100 transition-opacity">
+                    <i class="fas fa-check-circle text-xl"></i>
+                </div>
+            </label>
+
+            <label class="cursor-pointer relative group">
+                <input type="radio" name="analysis_mode" value="crack_severity" class="peer sr-only">
+                <div class="glass p-6 rounded-2xl border-2 border-slate-700 peer-checked:border-emerald-500 peer-checked:bg-emerald-900/20 transition-all text-center hover:border-emerald-400">
+                    <i class="fas fa-layer-group text-3xl text-emerald-400 mb-3"></i>
+                    <h3 class="text-white font-bold text-lg">Detection + Severity</h3>
+                    <p class="text-slate-400 text-sm mt-2">Measure and classify risk using ACI 224R-01.</p>
+                </div>
+                <div class="absolute top-4 right-4 text-emerald-500 opacity-0 peer-checked:opacity-100 transition-opacity">
+                    <i class="fas fa-check-circle text-xl"></i>
+                </div>
+            </label>
+        </div>
+
+        <section class="glass rounded-2xl p-6 shadow-2xl grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 border-t-4 border-slate-700">
+            <div>
+                <label class="text-xs font-bold text-slate-400 uppercase">Confidence Threshold (<span id="conf-val">0.25</span>)</label>
+                <input type="range" id="conf-input" min="0.05" max="1.0" step="0.05" value="0.25" class="w-full mt-2 accent-blue-500">
+            </div>
+            <div>
+                <label class="text-xs font-bold text-slate-400 uppercase">IOU Threshold (<span id="iou-val">0.50</span>)</label>
+                <input type="range" id="iou-input" min="0.05" max="1.0" step="0.05" value="0.50" class="w-full mt-2 accent-blue-500">
+            </div>
+            <div>
+                <label class="text-xs font-bold text-slate-400 uppercase">Reference Coin Diameter (mm)</label>
+                <input type="number" id="coin-input" step="0.1" value="18.5" class="w-full bg-slate-900/50 border border-slate-700 text-white rounded-lg p-2 mt-1 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all">
+            </div>
+        </section>
+
+        <section class="glass rounded-2xl p-8 shadow-2xl mb-8">
+            <form id="upload-form" class="space-y-6">
+                {% csrf_token %}
+                <div class="flex items-center justify-center w-full">
+                    <label class="flex flex-col items-center justify-center w-full h-40 border-2 border-slate-700 border-dashed rounded-xl cursor-pointer bg-slate-800/50 hover:bg-slate-800 hover:border-blue-500 transition-all group">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <div class="p-3 bg-slate-800 rounded-full mb-3 group-hover:bg-blue-600/20 transition-colors">
+                                <i class="fas fa-cloud-upload-alt text-2xl text-blue-500"></i>
+                            </div>
+                            <p class="mb-1 text-sm text-slate-300"><span class="font-semibold">Click to upload</span> multiple images</p>
+                            <p class="text-xs text-slate-500">Supported: JPG, PNG</p>
+                        </div>
+                        <input type="file" id="file-input" name="image" class="hidden" multiple accept="image/*" />
+                    </label>
+                </div>
+            </form>
+        </section>
+
+        <div id="results-grid" class="space-y-8 pb-10"></div>
+    </section>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const fileInput = document.getElementById('file-input');
+    const resultsGrid = document.getElementById('results-grid');
+    const statusCounter = document.getElementById('status-counter');
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    
+    const confInput = document.getElementById('conf-input');
+    const confVal = document.getElementById('conf-val');
+    const iouInput = document.getElementById('iou-input');
+    const iouVal = document.getElementById('iou-val');
+    const coinInput = document.getElementById('coin-input');
+    const csvBtn = document.getElementById('download-csv-btn');
+
+    confInput.addEventListener('input', (e) => confVal.innerText = parseFloat(e.target.value).toFixed(2));
+    iouInput.addEventListener('input', (e) => iouVal.innerText = parseFloat(e.target.value).toFixed(2));
+
+    let globalResultsData = [];
+
+    fileInput.addEventListener('change', async (e) => {
+        const files = Array.from(e.target.files);
+        if (files.length === 0) return;
+
+        let processedCount = 0;
+        statusCounter.innerText = `Processing 0/${files.length} images...`;
+        
+        const currentConf = confInput.value;
+        const currentIou = iouInput.value;
+        const currentCoin = coinInput.value;
+        const analysisMode = document.querySelector('input[name="analysis_mode"]:checked').value;
+
+        for (const [index, file] of files.entries()) {
+            const cardId = `card-${Date.now()}-${index}`;
+            const cardHTML = createLoadingCard(cardId, file.name);
+            resultsGrid.insertAdjacentHTML('afterbegin', cardHTML); 
+            
+            const cardElement = document.getElementById(cardId);
+
+            try {
+                const formData = new FormData();
+                formData.append('image', file);
+                formData.append('conf', currentConf);
+                formData.append('iou', currentIou);
+                formData.append('coin_diameter', currentCoin);
+                formData.append('mode', analysisMode); 
+
+                const response = await fetch('/api/process/', {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': csrfToken },
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    updateCardWithResult(cardElement, data);
+                    
+                    globalResultsData.push({
+                        filename: data.filename,
+                        status: "Success",
+                        max_width_mm: data.data.max_width,
+                        avg_width_mm: data.data.avg_width,
+                        scale_mm_px: data.data.scale,
+                        severity: data.data.severity || "N/A"
+                    });
+                } else {
+                    updateCardWithError(cardElement, data.error);
+                    globalResultsData.push({
+                        filename: file.name,
+                        status: `Error: ${data.error}`,
+                        max_width_mm: "N/A",
+                        avg_width_mm: "N/A",
+                        scale_mm_px: "N/A",
+                        severity: "N/A"
+                    });
+                }
+            } catch (err) {
+                updateCardWithError(cardElement, "Network Error");
+            }
+
+            processedCount++;
+            statusCounter.innerText = `Processing ${processedCount}/${files.length} images...`;
+        }
+
+        statusCounter.innerText = `Completed ${files.length} images`;
+        fileInput.value = ''; 
+        
+        if(globalResultsData.length > 0) {
+            csvBtn.classList.remove('hidden');
+        }
+    });
+
+    csvBtn.addEventListener('click', () => {
+        if (globalResultsData.length === 0) return;
+        let csvContent = "data:text/csv;charset=utf-8,";
+        csvContent += "Filename,Status,Max Width (mm),Avg Width (mm),Scale (px/mm),Severity\n";
+
+        globalResultsData.forEach(row => {
+            csvContent += `"${row.filename}","${row.status}","${row.max_width_mm}","${row.avg_width_mm}","${row.scale_mm_px}","${row.severity}"\n`;
+        });
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `crack_analysis_${Date.now()}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    });
+
+    function createLoadingCard(id, filename) {
+        return `
+        <div id="${id}" class="glass rounded-2xl p-6 fade-in border-l-4 border-slate-600 shadow-xl">
+            <div class="flex items-center space-x-4 mb-4">
+                <div class="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                <h3 class="text-lg font-medium text-slate-300">Analyzing: ${filename}</h3>
+            </div>
+            <div class="h-64 bg-slate-800/50 rounded-xl animate-pulse w-full"></div>
+        </div>`;
+    }
+
+    function updateCardWithResult(card, data) {
+        card.className = "glass rounded-2xl p-6 fade-in border-l-4 border-emerald-500 shadow-xl";
+        
+        let severityHtml = '';
+        if (data.data.severity) {
+            const isSafe = data.data.is_safe;
+            const borderColor = isSafe ? 'border-emerald-500/50' : 'border-red-500/50';
+            const textColor = isSafe ? 'text-emerald-400' : 'text-red-400';
+            const bgColor = isSafe ? 'bg-emerald-900/20' : 'bg-red-900/20';
+            
+            severityHtml = `
+                <div class="${bgColor} p-4 rounded-xl border ${borderColor}">
+                    <p class="text-slate-400 text-xs uppercase font-bold">Severity (ACI 224R-01)</p>
+                    <p class="text-xl font-bold ${textColor} mt-1">${data.data.severity}</p>
+                </div>
+            `;
+        }
+
+        card.innerHTML = `
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="space-y-2">
+                    <p class="text-xs text-slate-400 uppercase font-bold">Original Image</p>
+                    <div class="bg-slate-900 rounded-xl flex items-center justify-center p-2 border border-slate-700">
+                        <img src="${data.original_url}" class="rounded-lg w-full h-auto max-h-96 object-contain">
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <p class="text-xs text-blue-400 uppercase font-bold">AI Analysis Overlay</p>
+                    <div class="bg-slate-900 rounded-xl flex items-center justify-center p-2 border border-blue-500/30">
+                        <img src="${data.result_url}" class="rounded-lg w-full h-auto max-h-96 object-contain">
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+                <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                    <p class="text-slate-500 text-xs uppercase font-bold">Max Width</p>
+                    <p class="text-2xl font-bold text-white">${data.data.max_width} <span class="text-sm text-slate-500">mm</span></p>
+                </div>
+                <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                    <p class="text-slate-500 text-xs uppercase font-bold">Avg Width</p>
+                    <p class="text-2xl font-bold text-white">${data.data.avg_width} <span class="text-sm text-slate-500">mm</span></p>
+                </div>
+                <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                    <p class="text-slate-500 text-xs uppercase font-bold">Scale</p>
+                    <p class="text-2xl font-bold text-white">${data.data.scale} <span class="text-sm text-slate-500">px/mm</span></p>
+                </div>
+                ${severityHtml}
+            </div>
+        `;
+    }
+
+    function updateCardWithError(card, errorMessage) {
+        card.className = "glass rounded-2xl p-6 fade-in border-l-4 border-red-500 shadow-xl";
+        card.innerHTML = `
+            <div class="flex items-center text-red-400">
+                <i class="fas fa-exclamation-circle text-2xl mr-3"></i>
+                <div>
+                    <h3 class="font-bold">Analysis Failed</h3>
+                    <p class="text-sm text-red-300/80">${errorMessage}</p>
+                </div>
+            </div>
+        `;
+    }
+</script>
+{% endblock %}
