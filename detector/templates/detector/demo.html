@@ -8,27 +8,32 @@
     <section class="fade-in">
         <div class="text-center mb-10">
             <h1 class="text-4xl font-extrabold text-white mb-4">Live Analysis Demo</h1>
-            <p class="text-lg text-slate-400 max-w-2xl mx-auto">Select your analysis mode, adjust parameters if needed, and upload concrete surface images to test the YOLOv11 detection model.</p>
+            <p class="text-lg text-slate-400 max-w-2xl mx-auto">Select your analysis mode, adjust parameters if needed,
+                and upload concrete surface images to test the YOLOv11 detection model.</p>
         </div>
-        
-        <div class="flex justify-between items-end mb-6">
-            <div class="flex space-x-4 items-center">
-                <button id="download-csv-btn" class="hidden bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-lg shadow-emerald-600/20 transition-all">
-                    <i class="fas fa-file-csv mr-2"></i>Export CSV
-                </button>
-                <div id="status-counter" class="text-sm font-mono text-blue-400 bg-blue-500/10 px-3 py-1 rounded-full border border-blue-500/20">
-                    System Ready
-                </div>
+
+        <div class="flex flex-col md:flex-row justify-between items-center mb-8 space-y-4 md:space-y-0">
+            <div id="status-counter"
+                class="text-sm font-mono text-blue-400 bg-blue-500/10 px-3 py-1 rounded-full border border-blue-500/20">
+                System Ready</div>
+            <div class="flex space-x-3">
+                <button id="download-excel-btn"
+                    class="hidden bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-xs font-bold transition-all"><i
+                        class="fas fa-file-excel mr-2"></i>Excel</button>
+                <button id="download-pdf-btn"
+                    class="hidden bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-lg text-xs font-bold transition-all"><i
+                        class="fas fa-file-pdf mr-2"></i>PDF Report</button>
             </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <label class="cursor-pointer relative group">
                 <input type="radio" name="analysis_mode" value="crack_only" class="peer sr-only" checked>
-                <div class="glass p-6 rounded-2xl border-2 border-slate-700 peer-checked:border-blue-500 peer-checked:bg-blue-900/20 transition-all text-center hover:border-blue-400">
+                <div
+                    class="glass p-6 rounded-2xl border-2 border-slate-700 peer-checked:border-blue-500 peer-checked:bg-blue-900/20 transition-all text-center hover:border-blue-400">
                     <i class="fas fa-search text-3xl text-blue-400 mb-3"></i>
                     <h3 class="text-white font-bold text-lg">Crack Detection Only</h3>
-                    <p class="text-slate-400 text-sm mt-2">Locate and measure crack widths.</p>
+                    <p class="text-slate-400 text-sm mt-2">Simply locate cracks. No coin required.</p>
                 </div>
                 <div class="absolute top-4 right-4 text-blue-500 opacity-0 peer-checked:opacity-100 transition-opacity">
                     <i class="fas fa-check-circle text-xl"></i>
@@ -37,29 +42,38 @@
 
             <label class="cursor-pointer relative group">
                 <input type="radio" name="analysis_mode" value="crack_severity" class="peer sr-only">
-                <div class="glass p-6 rounded-2xl border-2 border-slate-700 peer-checked:border-emerald-500 peer-checked:bg-emerald-900/20 transition-all text-center hover:border-emerald-400">
+                <div
+                    class="glass p-6 rounded-2xl border-2 border-slate-700 peer-checked:border-emerald-500 peer-checked:bg-emerald-900/20 transition-all text-center hover:border-emerald-400">
                     <i class="fas fa-layer-group text-3xl text-emerald-400 mb-3"></i>
                     <h3 class="text-white font-bold text-lg">Detection + Severity</h3>
-                    <p class="text-slate-400 text-sm mt-2">Measure and classify risk using ACI 224R-01.</p>
+                    <p class="text-slate-400 text-sm mt-2">Measure and classify risk using ACI 224R-01. (Coin Required)
+                    </p>
                 </div>
-                <div class="absolute top-4 right-4 text-emerald-500 opacity-0 peer-checked:opacity-100 transition-opacity">
+                <div
+                    class="absolute top-4 right-4 text-emerald-500 opacity-0 peer-checked:opacity-100 transition-opacity">
                     <i class="fas fa-check-circle text-xl"></i>
                 </div>
             </label>
         </div>
 
-        <section class="glass rounded-2xl p-6 shadow-2xl grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 border-t-4 border-slate-700">
+        <section
+            class="glass rounded-2xl p-6 shadow-2xl grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 border-t-4 border-slate-700">
             <div>
-                <label class="text-xs font-bold text-slate-400 uppercase">Confidence Threshold (<span id="conf-val">0.25</span>)</label>
-                <input type="range" id="conf-input" min="0.05" max="1.0" step="0.05" value="0.25" class="w-full mt-2 accent-blue-500">
+                <label class="text-xs font-bold text-slate-400 uppercase">Confidence Threshold (<span
+                        id="conf-val">0.25</span>)</label>
+                <input type="range" id="conf-input" min="0.05" max="1.0" step="0.05" value="0.25"
+                    class="w-full mt-2 accent-blue-500">
             </div>
             <div>
-                <label class="text-xs font-bold text-slate-400 uppercase">IOU Threshold (<span id="iou-val">0.50</span>)</label>
-                <input type="range" id="iou-input" min="0.05" max="1.0" step="0.05" value="0.50" class="w-full mt-2 accent-blue-500">
+                <label class="text-xs font-bold text-slate-400 uppercase">IOU Threshold (<span
+                        id="iou-val">0.50</span>)</label>
+                <input type="range" id="iou-input" min="0.05" max="1.0" step="0.05" value="0.50"
+                    class="w-full mt-2 accent-blue-500">
             </div>
-            <div>
-                <label class="text-xs font-bold text-slate-400 uppercase">Reference Coin Diameter (mm)</label>
-                <input type="number" id="coin-input" step="0.1" value="18.5" class="w-full bg-slate-900/50 border border-slate-700 text-white rounded-lg p-2 mt-1 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all">
+            <div id="coin-setting-container" class="opacity-30 pointer-events-none transition-opacity duration-300">
+                <label class="text-xs font-bold text-slate-400 uppercase">Reference Coin (mm)</label>
+                <input type="number" id="coin-input" step="0.1" value="18.5" disabled
+                    class="w-full bg-slate-900/50 border border-slate-700 text-white rounded-lg p-2 mt-1 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all">
             </div>
         </section>
 
@@ -67,12 +81,15 @@
             <form id="upload-form" class="space-y-6">
                 {% csrf_token %}
                 <div class="flex items-center justify-center w-full">
-                    <label class="flex flex-col items-center justify-center w-full h-40 border-2 border-slate-700 border-dashed rounded-xl cursor-pointer bg-slate-800/50 hover:bg-slate-800 hover:border-blue-500 transition-all group">
+                    <label
+                        class="flex flex-col items-center justify-center w-full h-40 border-2 border-slate-700 border-dashed rounded-xl cursor-pointer bg-slate-800/50 hover:bg-slate-800 hover:border-blue-500 transition-all group">
                         <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                            <div class="p-3 bg-slate-800 rounded-full mb-3 group-hover:bg-blue-600/20 transition-colors">
+                            <div
+                                class="p-3 bg-slate-800 rounded-full mb-3 group-hover:bg-blue-600/20 transition-colors">
                                 <i class="fas fa-cloud-upload-alt text-2xl text-blue-500"></i>
                             </div>
-                            <p class="mb-1 text-sm text-slate-300"><span class="font-semibold">Click to upload</span> multiple images</p>
+                            <p class="mb-1 text-sm text-slate-300"><span class="font-semibold">Click to upload</span>
+                                multiple images</p>
                             <p class="text-xs text-slate-500">Supported: JPG, PNG</p>
                         </div>
                         <input type="file" id="file-input" name="image" class="hidden" multiple accept="image/*" />
@@ -88,21 +105,40 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.5.25/dist/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
 <script>
     const fileInput = document.getElementById('file-input');
     const resultsGrid = document.getElementById('results-grid');
     const statusCounter = document.getElementById('status-counter');
     const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-    
+
     const confInput = document.getElementById('conf-input');
     const confVal = document.getElementById('conf-val');
     const iouInput = document.getElementById('iou-input');
     const iouVal = document.getElementById('iou-val');
     const coinInput = document.getElementById('coin-input');
-    const csvBtn = document.getElementById('download-csv-btn');
+    const coinContainer = document.getElementById('coin-setting-container');
+    const excelBtn = document.getElementById('download-excel-btn');
+    const pdfBtn = document.getElementById('download-pdf-btn');
+    const modeRadios = document.querySelectorAll('input[name="analysis_mode"]');
 
     confInput.addEventListener('input', (e) => confVal.innerText = parseFloat(e.target.value).toFixed(2));
     iouInput.addEventListener('input', (e) => iouVal.innerText = parseFloat(e.target.value).toFixed(2));
+
+    modeRadios.forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            if (e.target.value === 'crack_severity') {
+                coinContainer.classList.remove('opacity-30', 'pointer-events-none');
+                coinInput.disabled = false;
+            } else {
+                coinContainer.classList.add('opacity-30', 'pointer-events-none');
+                coinInput.disabled = true;
+            }
+        });
+    });
 
     let globalResultsData = [];
 
@@ -112,7 +148,7 @@
 
         let processedCount = 0;
         statusCounter.innerText = `Processing 0/${files.length} images...`;
-        
+
         const currentConf = confInput.value;
         const currentIou = iouInput.value;
         const currentCoin = coinInput.value;
@@ -120,9 +156,7 @@
 
         for (const [index, file] of files.entries()) {
             const cardId = `card-${Date.now()}-${index}`;
-            const cardHTML = createLoadingCard(cardId, file.name);
-            resultsGrid.insertAdjacentHTML('afterbegin', cardHTML); 
-            
+            resultsGrid.insertAdjacentHTML('afterbegin', createLoadingCard(cardId, file.name));
             const cardElement = document.getElementById(cardId);
 
             try {
@@ -131,7 +165,7 @@
                 formData.append('conf', currentConf);
                 formData.append('iou', currentIou);
                 formData.append('coin_diameter', currentCoin);
-                formData.append('mode', analysisMode); 
+                formData.append('mode', analysisMode);
 
                 const response = await fetch('/api/process/', {
                     method: 'POST',
@@ -142,64 +176,90 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    updateCardWithResult(cardElement, data);
-                    
+                    const maxWidth = parseFloat(data.data.max_width || 0);
+                    const calibratedWidth = (maxWidth * 0.9).toFixed(2);
+
+                    let recText = "";
+                    let actions = "";
+                    if (data.data.mode === 'crack_only') {
+                        recText = data.data.crack_detected ? "Re-run with Severity mode." : "No action required.";
+                    } else {
+                        if (maxWidth < 0.10) { recText = "Routine monitoring."; actions = "Inspection only"; }
+                        else if (maxWidth <= 0.30) { recText = "Seal and monitor."; actions = "Surface sealing, epoxy fillers"; }
+                        else if (maxWidth <= 0.50) { recText = "Consult engineer."; actions = "Epoxy injection, waterproofing"; }
+                        else { recText = "Immediate assessment."; actions = "Grouting, stitching, strengthening"; }
+                    }
+
+                    updateCardWithResult(cardElement, data, currentConf, currentIou, calibratedWidth, recText, actions);
+
                     globalResultsData.push({
                         filename: data.filename,
-                        status: "Success",
-                        max_width_mm: data.data.max_width,
-                        avg_width_mm: data.data.avg_width,
-                        scale_mm_px: data.data.scale,
-                        severity: data.data.severity || "N/A"
+                        max_width: maxWidth,
+                        avg_width: data.data.avg_width || "N/A",
+                        scale: data.data.scale || "N/A",
+                        calibrated_width: calibratedWidth,
+                        severity: data.data.severity || "N/A",
+                        recommendation: recText,
+                        actions: actions,
+                        result_url: data.result_url
                     });
                 } else {
                     updateCardWithError(cardElement, data.error);
-                    globalResultsData.push({
-                        filename: file.name,
-                        status: `Error: ${data.error}`,
-                        max_width_mm: "N/A",
-                        avg_width_mm: "N/A",
-                        scale_mm_px: "N/A",
-                        severity: "N/A"
-                    });
                 }
             } catch (err) {
                 updateCardWithError(cardElement, "Network Error");
             }
-
             processedCount++;
             statusCounter.innerText = `Processing ${processedCount}/${files.length} images...`;
         }
-
         statusCounter.innerText = `Completed ${files.length} images`;
-        fileInput.value = ''; 
-        
-        if(globalResultsData.length > 0) {
-            csvBtn.classList.remove('hidden');
+        if (globalResultsData.length > 0) {
+            excelBtn.classList.remove('hidden');
+            pdfBtn.classList.remove('hidden');
         }
     });
 
-    csvBtn.addEventListener('click', () => {
-        if (globalResultsData.length === 0) return;
-        let csvContent = "data:text/csv;charset=utf-8,";
-        csvContent += "Filename,Status,Max Width (mm),Avg Width (mm),Scale (px/mm),Severity\n";
+    // EXCEL EXPORT
+    document.getElementById('download-excel-btn').addEventListener('click', () => {
+        const worksheet = XLSX.utils.json_to_sheet(globalResultsData.map(item => ({
+            "File Name": item.filename,
+            "Max Width (mm)": item.max_width,
+            "Avg Width (mm)": item.avg_width,
+            "Scale (px/mm)": item.scale,
+            "Calibrated Width (mm)": item.calibrated_width,
+            "Severity": item.severity,
+            "Recommendation": item.recommendation,
+            "Actions": item.actions
+        })));
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Crack Analysis");
+        XLSX.writeFile(workbook, `CrackAI_Report_${Date.now()}.xlsx`);
+    });
 
-        globalResultsData.forEach(row => {
-            csvContent += `"${row.filename}","${row.status}","${row.max_width_mm}","${row.avg_width_mm}","${row.scale_mm_px}","${row.severity}"\n`;
+    // PDF EXPORT
+    document.getElementById('download-pdf-btn').addEventListener('click', async () => {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('l', 'mm', 'a4');
+        doc.setFillColor(15, 23, 42);
+        doc.rect(0, 0, 297, 40, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(22);
+        doc.text("CrackAI Structural Analysis Report", 14, 20);
+        doc.setFontSize(10);
+        doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 30);
+
+        doc.autoTable({
+            startY: 45,
+            head: [['File', 'Max(mm)', 'Calibrated(mm)', 'Severity', 'Recommendation']],
+            body: globalResultsData.map(i => [i.filename, i.max_width, i.calibrated_width, i.severity, i.recommendation]),
+            theme: 'striped',
+            headStyles: { fillColor: [37, 99, 235] }
         });
-
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", `crack_analysis_${Date.now()}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        doc.save(`CrackAI_Report.pdf`);
     });
 
     function createLoadingCard(id, filename) {
-        return `
-        <div id="${id}" class="glass rounded-2xl p-6 fade-in border-l-4 border-slate-600 shadow-xl">
+        return `<div id="${id}" class="glass rounded-2xl p-6 fade-in border-l-4 border-slate-600 shadow-xl mb-6">
             <div class="flex items-center space-x-4 mb-4">
                 <div class="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
                 <h3 class="text-lg font-medium text-slate-300">Analyzing: ${filename}</h3>
@@ -208,69 +268,95 @@
         </div>`;
     }
 
-    function updateCardWithResult(card, data) {
-        card.className = "glass rounded-2xl p-6 fade-in border-l-4 border-emerald-500 shadow-xl";
-        
-        let severityHtml = '';
-        if (data.data.severity) {
-            const isSafe = data.data.is_safe;
-            const borderColor = isSafe ? 'border-emerald-500/50' : 'border-red-500/50';
-            const textColor = isSafe ? 'text-emerald-400' : 'text-red-400';
-            const bgColor = isSafe ? 'bg-emerald-900/20' : 'bg-red-900/20';
-            
-            severityHtml = `
-                <div class="${bgColor} p-4 rounded-xl border ${borderColor}">
-                    <p class="text-slate-400 text-xs uppercase font-bold">Severity (ACI 224R-01)</p>
-                    <p class="text-xl font-bold ${textColor} mt-1">${data.data.severity}</p>
-                </div>
-            `;
-        }
+    function updateCardWithResult(card, data, conf, iou, calibrated, rec, actions) {
+        card.className = "glass rounded-2xl p-6 fade-in border-l-4 border-emerald-500 shadow-xl mb-6";
 
-        card.innerHTML = `
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="space-y-2">
-                    <p class="text-xs text-slate-400 uppercase font-bold">Original Image</p>
-                    <div class="bg-slate-900 rounded-xl flex items-center justify-center p-2 border border-slate-700">
-                        <img src="${data.original_url}" class="rounded-lg w-full h-auto max-h-96 object-contain">
-                    </div>
-                </div>
-                <div class="space-y-2">
-                    <p class="text-xs text-blue-400 uppercase font-bold">AI Analysis Overlay</p>
-                    <div class="bg-slate-900 rounded-xl flex items-center justify-center p-2 border border-blue-500/30">
-                        <img src="${data.result_url}" class="rounded-lg w-full h-auto max-h-96 object-contain">
-                    </div>
-                </div>
+        let statsHtml = '';
+        let recommendationHtml = '';
+
+        // Define Recommendation UI based on the mode
+        if (data.data.mode === 'crack_only') {
+            const detected = data.data.crack_detected;
+            const statusColor = detected ? 'text-red-400' : 'text-emerald-400';
+            const bgColor = detected ? 'bg-red-900/20' : 'bg-emerald-900/20';
+            const borderColor = detected ? 'border-red-500/50' : 'border-emerald-500/50';
+
+            statsHtml = `
+            <div class="col-span-full md:col-span-2 ${bgColor} p-6 rounded-xl border ${borderColor} text-center flex flex-col justify-center">
+                <p class="text-slate-400 text-xs uppercase font-bold mb-2">Detection Status</p>
+                <p class="text-2xl font-extrabold ${statusColor}">${detected ? 'YES - Crack Detected' : 'NO - Surface Clear'}</p>
             </div>
-
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-                <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
-                    <p class="text-slate-500 text-xs uppercase font-bold">Max Width</p>
-                    <p class="text-2xl font-bold text-white">${data.data.max_width} <span class="text-sm text-slate-500">mm</span></p>
-                </div>
-                <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
-                    <p class="text-slate-500 text-xs uppercase font-bold">Avg Width</p>
-                    <p class="text-2xl font-bold text-white">${data.data.avg_width} <span class="text-sm text-slate-500">mm</span></p>
-                </div>
-                <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
-                    <p class="text-slate-500 text-xs uppercase font-bold">Scale</p>
-                    <p class="text-2xl font-bold text-white">${data.data.scale} <span class="text-sm text-slate-500">px/mm</span></p>
-                </div>
-                ${severityHtml}
+            <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700 text-center">
+                <p class="text-slate-500 text-[10px] uppercase font-bold mb-1">Conf Threshold</p>
+                <p class="text-xl font-bold text-white">${conf}</p>
+            </div>
+            <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700 text-center">
+                <p class="text-slate-500 text-[10px] uppercase font-bold mb-1">IOU Threshold</p>
+                <p class="text-xl font-bold text-white">${iou}</p>
             </div>
         `;
+        } else {
+            // Detailed Grid for Severity Mode
+            statsHtml = `
+            <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700 text-center">
+                <p class="text-emerald-400 text-[10px] uppercase font-bold mb-1">Calibrated Width</p>
+                <p class="text-xl font-bold text-white">${calibrated}<span class="text-xs ml-1 text-slate-500">mm</span></p>
+            </div>
+            <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700 text-center">
+                <p class="text-slate-500 text-[10px] uppercase font-bold mb-1">Max Width</p>
+                <p class="text-xl font-bold text-white">${data.data.max_width}<span class="text-xs ml-1 text-slate-500">mm</span></p>
+            </div>
+            <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700 text-center">
+                <p class="text-slate-500 text-[10px] uppercase font-bold mb-1">Classification</p>
+                <p class="text-sm font-bold text-blue-400">${data.data.severity}</p>
+            </div>
+            <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700 text-center">
+                <p class="text-slate-500 text-[10px] uppercase font-bold mb-1">Conf / IOU</p>
+                <p class="text-sm font-bold text-white">${conf} / ${iou}</p>
+            </div>
+        `;
+        }
+
+        // Engineering Recommendation Block
+        recommendationHtml = `
+        <div class="mt-6 bg-slate-900/80 p-5 rounded-xl border border-slate-700 shadow-inner">
+            <div class="flex items-center space-x-3 mb-3">
+                <i class="fas fa-tools text-blue-500"></i>
+                <h4 class="text-white font-bold text-xs uppercase tracking-wider text-slate-400">Engineering Recommendation</h4>
+            </div>
+            <p class="text-white font-medium text-sm leading-relaxed mb-2">${rec}</p>
+            ${actions ? `<div class="text-xs text-blue-300 bg-blue-500/10 p-2 rounded border border-blue-500/20"><strong>Suggested Actions:</strong> ${actions}</div>` : ''}
+            <div class="mt-4 pt-4 border-t border-slate-800 text-[10px] text-slate-500 italic">
+                Note: Appropriate repair techniques should be selected based on crack width, exposure conditions, and structural importance.
+            </div>
+        </div>
+    `;
+
+        card.innerHTML = `
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="space-y-2">
+                <p class="text-[10px] text-slate-500 uppercase font-bold ml-1">Original Source</p>
+                <div class="bg-slate-900 rounded-xl p-2 border border-slate-800">
+                    <img src="${data.original_url}" class="rounded-lg w-full h-auto max-h-80 object-contain mx-auto">
+                </div>
+            </div>
+            <div class="space-y-2">
+                <p class="text-[10px] text-blue-500 uppercase font-bold ml-1">AI Analysis Overlay</p>
+                <div class="bg-slate-900 rounded-xl p-2 border border-blue-500/20">
+                    <img src="${data.result_url}" class="rounded-lg w-full h-auto max-h-80 object-contain mx-auto">
+                </div>
+            </div>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+            ${statsHtml}
+        </div>
+        ${recommendationHtml}
+    `;
     }
 
     function updateCardWithError(card, errorMessage) {
-        card.className = "glass rounded-2xl p-6 fade-in border-l-4 border-red-500 shadow-xl";
-        card.innerHTML = `
-            <div class="flex items-center text-red-400">
-                <i class="fas fa-exclamation-circle text-2xl mr-3"></i>
-                <div>
-                    <h3 class="font-bold">Analysis Failed</h3>
-                    <p class="text-sm text-red-300/80">${errorMessage}</p>
-                </div>
-            </div>
-        `;
+        card.className = "glass rounded-2xl p-6 fade-in border-l-4 border-red-500 shadow-xl mb-6";
+        card.innerHTML = `<div class="flex items-center text-red-400"><i class="fas fa-exclamation-circle text-2xl mr-3"></i><div><h3 class="font-bold">Analysis Failed</h3><p class="text-sm text-red-300/80">${errorMessage}</p></div></div>`;
     }
 </script>
 {% endblock %}

@@ -48,90 +48,122 @@ class CrackDetector:
         h_orig, w_orig = img.shape[:2]
         vis = img.copy()
 
-        # 1. Coin Detection & Calibration 
-        coin_results = self.coin_model(img, conf=conf, iou=iou)[0]
-        if coin_results.boxes is None or len(coin_results.boxes) == 0:
-            return None, "Reference coin not found."
-        
-        boxes = coin_results.boxes.xyxy.cpu().numpy().tolist()
-        box = boxes[0] 
-        x1, y1, x2, y2 = box
-        
-        px = max(x2 - x1, y2 - y1)
-        if px <= 0:
-            return None, "Invalid coin dimensions."
+        # ==========================================
+        # MODE 1: CRACK DETECTION ONLY
+        # ==========================================
+        if mode == 'crack_only':
+            crack_results = self.crack_model(img, conf=conf, iou=iou)[0]
+            masks = instance_masks_from_result(crack_results, (h_orig, w_orig))
             
-        mm_per_pixel = coin_diameter / px
+            crack_detected = len(masks) > 0
+            
+            if crack_detected:
+                merged_mask = np.zeros((h_orig, w_orig), dtype=np.uint8)
+                for m in masks:
+                    merged_mask = np.logical_or(merged_mask, m)
+                merged_mask = merged_mask.astype(np.uint8)
+                
+                # Draw only the red mask overlay
+                crack_overlay = np.zeros_like(vis)
+                crack_overlay[merged_mask > 0] = [0, 0, 255] 
+                vis = cv2.addWeighted(vis, 1.0, crack_overlay, 0.4, 0)
+            
+            # Resize for web display
+            h, w = vis.shape[:2]
+            max_width = 720
+            if w > max_width:
+                scale_ratio = max_width / w
+                new_h = int(h * scale_ratio)
+                vis = cv2.resize(vis, (max_width, new_h), interpolation=cv2.INTER_AREA)
 
-        # 2. Crack Segmentation 
-        crack_results = self.crack_model(img, conf=conf, iou=iou)[0]
-        masks = instance_masks_from_result(crack_results, (h_orig, w_orig))
+            cv2.imwrite(output_path, vis)
+            
+            return {
+                'mode': 'crack_only',
+                'crack_detected': crack_detected
+            }, None
 
-        if len(masks) == 0:
-            return None, "No cracks detected."
+        # ==========================================
+        # MODE 2: DETECTION + SEVERITY (Needs Coin)
+        # ==========================================
+        else:
+            # 1. Coin Detection & Calibration 
+            coin_results = self.coin_model(img, conf=conf, iou=iou)[0]
+            if coin_results.boxes is None or len(coin_results.boxes) == 0:
+                return None, "Reference coin not found. Ensure coin is visible or use 'Crack Detection Only' mode."
+            
+            boxes = coin_results.boxes.xyxy.cpu().numpy().tolist()
+            box = boxes[0] 
+            x1, y1, x2, y2 = box
+            
+            px = max(x2 - x1, y2 - y1)
+            if px <= 0:
+                return None, "Invalid coin dimensions."
+                
+            mm_per_pixel = coin_diameter / px
 
-        merged_mask = np.zeros((h_orig, w_orig), dtype=np.uint8)
-        for m in masks:
-            merged_mask = np.logical_or(merged_mask, m)
-        merged_mask = merged_mask.astype(np.uint8)
+            # 2. Crack Segmentation 
+            crack_results = self.crack_model(img, conf=conf, iou=iou)[0]
+            masks = instance_masks_from_result(crack_results, (h_orig, w_orig))
 
-        # 3. Measurement
-        width_px, point, all_widths = compute_width(merged_mask)
-        if width_px is None:
-            return None, "Measurement failed."
+            if len(masks) == 0:
+                return None, "No cracks detected."
 
-        max_w_mm = width_px * mm_per_pixel
-        avg_w_mm = np.mean(all_widths) * mm_per_pixel
-        max_x, max_y = point
+            merged_mask = np.zeros((h_orig, w_orig), dtype=np.uint8)
+            for m in masks:
+                merged_mask = np.logical_or(merged_mask, m)
+            merged_mask = merged_mask.astype(np.uint8)
 
-        # 4. ACI 224R-01 Severity Classification
-        severity_label = None
-        is_safe = True
-        
-        if mode == 'crack_severity':
-            if max_w_mm <= 0.15:
-                severity_label = "Minor (Safe)"
+            # 3. Measurement
+            width_px, point, all_widths = compute_width(merged_mask)
+            if width_px is None:
+                return None, "Measurement failed."
+
+            max_w_mm = width_px * mm_per_pixel
+            avg_w_mm = np.mean(all_widths) * mm_per_pixel
+            max_x, max_y = point
+
+            # 4. Updated Severity Classification Logic
+            if max_w_mm < 0.10:
+                severity_label = "Hairline crack"
                 is_safe = True
             elif max_w_mm <= 0.30:
-                severity_label = "Moderate (Monitor)"
+                severity_label = "Fine / Minor"
                 is_safe = True
-            elif max_w_mm <= 0.41:
-                severity_label = "Severe (Action Needed)"
+            elif max_w_mm <= 0.50:
+                severity_label = "Moderate"
                 is_safe = False
             else:
-                severity_label = "Critical (Danger)"
+                severity_label = "Severe"
                 is_safe = False
 
-        # 5. Visualization
-        crack_overlay = np.zeros_like(vis)
-        crack_overlay[merged_mask > 0] = [0, 0, 255] 
-        vis = cv2.addWeighted(vis, 1.0, crack_overlay, 0.4, 0)
-        
-        cv2.circle(vis, (max_x, max_y), 10, (0, 255, 0), -1) 
-        cv2.circle(vis, (max_x, max_y), 15, (255, 255, 255), 2) 
-        
-        cv2.putText(vis, f"MAX: {max_w_mm:.2f}mm", (max_x + 20, max_y), 
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2, cv2.LINE_AA)
-        cv2.rectangle(vis, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 255), 2)
-
-        h, w = vis.shape[:2]
-        max_width = 720
-        if w > max_width:
-            scale_ratio = max_width / w
-            new_h = int(h * scale_ratio)
-            vis = cv2.resize(vis, (max_width, new_h), interpolation=cv2.INTER_AREA)
-
-        cv2.imwrite(output_path, vis)
-        
-        # 6. Build Return Payload
-        response_data = {
-            'max_width': round(max_w_mm, 2), 
-            'avg_width': round(avg_w_mm, 2), 
-            'scale': round(mm_per_pixel, 4)
-        }
-        
-        if mode == 'crack_severity':
-            response_data['severity'] = severity_label
-            response_data['is_safe'] = is_safe
+            # 5. Visualization (Mask + Box + Green Dot)
+            crack_overlay = np.zeros_like(vis)
+            crack_overlay[merged_mask > 0] = [0, 0, 255] 
+            vis = cv2.addWeighted(vis, 1.0, crack_overlay, 0.4, 0)
             
-        return response_data, None
+            cv2.circle(vis, (max_x, max_y), 10, (0, 255, 0), -1) 
+            cv2.circle(vis, (max_x, max_y), 15, (255, 255, 255), 2) 
+            
+            cv2.putText(vis, f"MAX: {max_w_mm:.2f}mm", (max_x + 20, max_y), 
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2, cv2.LINE_AA)
+            cv2.rectangle(vis, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 255), 2)
+
+            h, w = vis.shape[:2]
+            max_width = 720
+            if w > max_width:
+                scale_ratio = max_width / w
+                new_h = int(h * scale_ratio)
+                vis = cv2.resize(vis, (max_width, new_h), interpolation=cv2.INTER_AREA)
+
+            cv2.imwrite(output_path, vis)
+            
+            return {
+                'mode': 'crack_severity',
+                'crack_detected': True,
+                'max_width': round(max_w_mm, 2), 
+                'avg_width': round(avg_w_mm, 2), 
+                'scale': round(mm_per_pixel, 4),
+                'severity': severity_label,
+                'is_safe': is_safe
+            }, None

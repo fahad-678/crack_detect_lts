@@ -124,42 +124,32 @@
                 <table class="w-full text-left text-sm text-slate-300">
                     <thead class="bg-slate-800/80 text-xs uppercase font-bold text-slate-400 border-b border-slate-700">
                         <tr>
-                            <th scope="col" class="px-6 py-4">Exposure Condition</th>
-                            <th scope="col" class="px-6 py-4">Tolerable Crack Width (mm)</th>
-                            <th scope="col" class="px-6 py-4">Tolerable Crack Width (in)</th>
+                            <th scope="col" class="px-6 py-4">Crack Width (mm)</th>
+                            <th scope="col" class="px-6 py-4">Classification</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-700/50">
                         <tr class="hover:bg-slate-800/30 transition-colors">
-                            <td class="px-6 py-4 font-medium text-white">Dry air or protective membrane</td>
-                            <td class="px-6 py-4">0.41</td>
-                            <td class="px-6 py-4">0.016</td>
+                            <td class="px-6 py-4 font-medium text-white">&lt; 0.10 mm</td>
+                            <td class="px-6 py-4">Hairline crack</td>
                         </tr>
                         <tr class="hover:bg-slate-800/30 transition-colors bg-slate-900/20">
-                            <td class="px-6 py-4 font-medium text-white">Humidity, moist air, soil</td>
-                            <td class="px-6 py-4">0.30</td>
-                            <td class="px-6 py-4">0.012</td>
+                            <td class="px-6 py-4 font-medium text-white">0.10 &ndash; 0.30 mm</td>
+                            <td class="px-6 py-4">Fine / Minor</td>
                         </tr>
                         <tr class="hover:bg-slate-800/30 transition-colors">
-                            <td class="px-6 py-4 font-medium text-white">Deicing chemicals</td>
-                            <td class="px-6 py-4">0.18</td>
-                            <td class="px-6 py-4">0.007</td>
+                            <td class="px-6 py-4 font-medium text-white">0.30 &ndash; 0.50 mm</td>
+                            <td class="px-6 py-4">Moderate</td>
                         </tr>
-                        <tr class="hover:bg-slate-800/30 transition-colors bg-slate-900/20">
-                            <td class="px-6 py-4 font-medium text-white">Seawater and seawater spray, wetting & drying</td>
-                            <td class="px-6 py-4">0.15</td>
-                            <td class="px-6 py-4">0.006</td>
-                        </tr>
-                        <tr class="hover:bg-slate-800/30 transition-colors border-b-2 border-red-500/30">
-                            <td class="px-6 py-4 font-medium text-red-400">Water-retaining structures</td>
-                            <td class="px-6 py-4 font-bold text-red-400">0.10</td>
-                            <td class="px-6 py-4 text-red-400">0.004</td>
+                        <tr class="hover:bg-slate-800/30 transition-colors bg-slate-900/20 border-b-2 border-red-500/30">
+                            <td class="px-6 py-4 font-bold text-red-400">&gt; 0.50 mm</td>
+                            <td class="px-6 py-4 font-bold text-red-400">Severe</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
             <div class="bg-slate-900/80 p-4 text-xs text-slate-500 text-center italic">
-                * Note: CrackAI uses these tolerances to assign severity classifications during analysis.
+                * Note: This classification is based on general research practice and interpreted from ACI 224R-01 guidelines.
             </div>
         </div>
     </section>
