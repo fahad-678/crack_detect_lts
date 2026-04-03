@@ -3,11 +3,11 @@
 {% block title %}CrackAI | Instructions & Guidelines{% endblock %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-20 relative z-10">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-20">
 
     <div class="text-center max-w-3xl mx-auto fade-in">
-        <h1 class="text-4xl font-extrabold text-slate-900 mb-4">Instructions & Warnings</h1>
-        <p class="text-lg text-slate-600">Everything you need to know to achieve highly accurate, ACI-compliant crack measurements.</p>
+        <h1 class="text-4xl font-extrabold text-slate-900 mb-4">Instructions & Guidelines</h1>
+        <p class="text-lg text-slate-600">Everything you need to know to capture optimal images and achieve highly accurate, ACI-compliant crack measurements.</p>
     </div>
 
     <section class="fade-in" style="animation-delay: 0.1s;">
@@ -15,48 +15,48 @@
             <i class="fas fa-project-diagram text-blue-600 mr-3"></i> System Workflow
         </h2>
         
-        <div class="glass card-hover p-8 rounded-2xl border border-slate-200 shadow-sm">
+        <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">
             <div class="flex flex-col md:flex-row items-center justify-between text-center space-y-6 md:space-y-0 md:space-x-4">
                 
                 <div class="flex-1 w-full">
-                    <div class="bg-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-slate-200 relative z-10 shadow-sm">
-                        <i class="fas fa-camera text-xl text-slate-500"></i>
+                    <div class="bg-slate-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-slate-200 relative z-10">
+                        <i class="fas fa-camera text-xl text-slate-600"></i>
                     </div>
                     <h3 class="text-slate-900 font-bold mb-2">1. Image Upload</h3>
-                    <p class="text-xs text-slate-500">User uploads image containing the crack and reference coin.</p>
+                    <p class="text-xs text-slate-600">User uploads image containing the crack and reference coin.</p>
                 </div>
 
                 <div class="hidden md:block text-slate-300"><i class="fas fa-chevron-right text-2xl"></i></div>
                 <div class="md:hidden text-slate-300"><i class="fas fa-chevron-down text-2xl"></i></div>
 
                 <div class="flex-1 w-full">
-                    <div class="bg-blue-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-blue-200 relative z-10 shadow-sm">
+                    <div class="bg-blue-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-blue-200 relative z-10">
                         <i class="fas fa-coins text-xl text-blue-600"></i>
                     </div>
                     <h3 class="text-slate-900 font-bold mb-2">2. Calibration</h3>
-                    <p class="text-xs text-slate-500">YOLOv11 detects the coin to calculate the exact mm/pixel scale.</p>
+                    <p class="text-xs text-slate-600">YOLOv11 detects the coin to calculate the exact mm/pixel scale.</p>
                 </div>
 
                 <div class="hidden md:block text-slate-300"><i class="fas fa-chevron-right text-2xl"></i></div>
                 <div class="md:hidden text-slate-300"><i class="fas fa-chevron-down text-2xl"></i></div>
 
                 <div class="flex-1 w-full">
-                    <div class="bg-purple-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-purple-200 relative z-10 shadow-sm">
+                    <div class="bg-purple-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-purple-200 relative z-10">
                         <i class="fas fa-draw-polygon text-xl text-purple-600"></i>
                     </div>
                     <h3 class="text-slate-900 font-bold mb-2">3. Segmentation</h3>
-                    <p class="text-xs text-slate-500">AI segments the crack at the pixel level and generates a skeleton mask.</p>
+                    <p class="text-xs text-slate-600">AI segments the crack at the pixel level and generates a skeleton mask.</p>
                 </div>
 
                 <div class="hidden md:block text-slate-300"><i class="fas fa-chevron-right text-2xl"></i></div>
                 <div class="md:hidden text-slate-300"><i class="fas fa-chevron-down text-2xl"></i></div>
 
                 <div class="flex-1 w-full">
-                    <div class="bg-emerald-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-emerald-200 relative z-10 shadow-sm">
+                    <div class="bg-emerald-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-emerald-200 relative z-10">
                         <i class="fas fa-clipboard-check text-xl text-emerald-600"></i>
                     </div>
                     <h3 class="text-slate-900 font-bold mb-2">4. Analysis</h3>
-                    <p class="text-xs text-slate-500">System calculates max width and outputs ACI 224R-01 severity.</p>
+                    <p class="text-xs text-slate-600">System calculates max width and outputs ACI 224R-01 severity.</p>
                 </div>
 
             </div>
@@ -65,49 +65,173 @@
 
     <section class="fade-in" style="animation-delay: 0.2s;">
         <h2 class="text-2xl font-bold text-slate-900 mb-8 flex items-center">
-            <i class="fas fa-exclamation-triangle text-amber-500 mr-3"></i> Image Capture Rules
+            <i class="fas fa-camera-retro text-blue-600 mr-3"></i> Image Capture Rules for Dataset & Model
         </h2>
         
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="glass card-hover p-8 rounded-2xl border-t-4 border-t-emerald-500 shadow-sm">
-                <h3 class="text-xl font-bold text-slate-900 mb-6 flex items-center">
-                    <i class="fas fa-check-circle text-emerald-500 mr-2"></i> Must Do
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <div class="bg-white p-5 rounded-2xl border-t-4 border-slate-200 shadow-sm hover:shadow-md hover:border-blue-400 transition-all">
+                <h3 class="font-bold text-slate-900 mb-3 flex items-center text-sm uppercase tracking-wide">
+                    <span class="text-blue-600 mr-2">01.</span> Lighting Conditions
                 </h3>
-                <ul class="space-y-4 text-slate-700 text-sm">
-                    <li class="flex items-start">
-                        <i class="fas fa-circle text-[8px] mt-1.5 mr-3 text-emerald-500"></i>
-                        <span><strong>Include the Reference Object:</strong> You MUST place a standard coin (default 18.5mm) flat against the surface next to the crack. Without it, scaling will fail.</span>
-                    </li>
-                    <li class="flex items-start">
-                        <i class="fas fa-circle text-[8px] mt-1.5 mr-3 text-emerald-500"></i>
-                        <span><strong>Perpendicular Angle:</strong> Hold your camera perfectly parallel to the wall/surface (90 degrees). Angles introduce perspective distortion.</span>
-                    </li>
-                    <li class="flex items-start">
-                        <i class="fas fa-circle text-[8px] mt-1.5 mr-3 text-emerald-500"></i>
-                        <span><strong>Good Lighting:</strong> Ensure the crack is well-lit and clearly visible without harsh shadows masking the edges.</span>
-                    </li>
+                <ul class="text-sm text-slate-600 space-y-2">
+                    <li class="flex items-start"><i class="fas fa-check text-emerald-600 mt-1 mr-2 text-xs"></i><span>Use uniform and sufficient lighting (prefer natural daylight).</span></li>
+                    <li class="flex items-start"><i class="fas fa-times text-red-600 mt-1 mr-2 text-xs"></i><span><strong>Avoid:</strong> Overexposure, underexposure, and strong shadows across cracks.</span></li>
+                    <li class="flex items-start"><i class="fas fa-info-circle text-blue-600 mt-1 mr-2 text-xs"></i><span>Ensure crack edges are clearly visible.</span></li>
                 </ul>
             </div>
 
-            <div class="glass card-hover p-8 rounded-2xl border-t-4 border-t-red-500 shadow-sm">
-                <h3 class="text-xl font-bold text-slate-900 mb-6 flex items-center">
-                    <i class="fas fa-times-circle text-red-500 mr-2"></i> Avoid
+            <div class="bg-white p-5 rounded-2xl border-t-4 border-slate-200 shadow-sm hover:shadow-md hover:border-blue-400 transition-all">
+                <h3 class="font-bold text-slate-900 mb-3 flex items-center text-sm uppercase tracking-wide">
+                    <span class="text-blue-600 mr-2">02.</span> Resolution & Quality
                 </h3>
-                <ul class="space-y-4 text-slate-700 text-sm">
-                    <li class="flex items-start">
-                        <i class="fas fa-circle text-[8px] mt-1.5 mr-3 text-red-500"></i>
-                        <span><strong>Extreme Angles:</strong> Do not take photos from the side or bottom. This will warp the coin's dimensions and ruin the mm/pixel calculation.</span>
-                    </li>
-                    <li class="flex items-start">
-                        <i class="fas fa-circle text-[8px] mt-1.5 mr-3 text-red-500"></i>
-                        <span><strong>Blurry Images:</strong> Out-of-focus images prevent the AI from accurately tracing the precise edges of the concrete crack.</span>
-                    </li>
-                    <li class="flex items-start">
-                        <i class="fas fa-circle text-[8px] mt-1.5 mr-3 text-red-500"></i>
-                        <span><strong>Obstructed Coins:</strong> Do not cover the reference coin with your fingers or place it too far into deep crevices.</span>
-                    </li>
+                <ul class="text-sm text-slate-600 space-y-2">
+                    <li class="flex items-start"><i class="fas fa-expand text-blue-600 mt-1 mr-2 text-xs"></i><span>Capture at high resolution (preferably ≥1024×1024).</span></li>
+                    <li class="flex items-start"><i class="fas fa-check text-emerald-600 mt-1 mr-2 text-xs"></i><span>Images must be sharp and properly focused.</span></li>
+                    <li class="flex items-start"><i class="fas fa-times text-red-600 mt-1 mr-2 text-xs"></i><span>Avoid excessive JPEG compression.</span></li>
                 </ul>
             </div>
+
+            <div class="bg-white p-5 rounded-2xl border-t-4 border-slate-200 shadow-sm hover:shadow-md hover:border-blue-400 transition-all">
+                <h3 class="font-bold text-slate-900 mb-3 flex items-center text-sm uppercase tracking-wide">
+                    <span class="text-blue-600 mr-2">03.</span> Camera Orientation
+                </h3>
+                <ul class="text-sm text-slate-600 space-y-2">
+                    <li class="flex items-start"><i class="fas fa-camera-rotate text-emerald-600 mt-1 mr-2 text-xs"></i><span>Maintain perpendicular (90°) camera angle to the surface.</span></li>
+                    <li class="flex items-start"><i class="fas fa-times text-red-600 mt-1 mr-2 text-xs"></i><span>Avoid tilted/oblique views unless intentionally adding variation.</span></li>
+                    <li class="flex items-start"><i class="fas fa-info-circle text-blue-600 mt-1 mr-2 text-xs"></i><span>Ensures geometric accuracy & reduces distortion.</span></li>
+                </ul>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl border-t-4 border-slate-200 shadow-sm hover:shadow-md hover:border-blue-400 transition-all">
+                <h3 class="font-bold text-slate-900 mb-3 flex items-center text-sm uppercase tracking-wide">
+                    <span class="text-blue-600 mr-2">04.</span> Distance & Framing
+                </h3>
+                <ul class="text-sm text-slate-600 space-y-2">
+                    <li class="flex items-start"><i class="fas fa-crop-alt text-emerald-600 mt-1 mr-2 text-xs"></i><span>Adjust distance so the crack is clearly visible and context is preserved.</span></li>
+                    <li class="flex items-start"><i class="fas fa-times text-red-600 mt-1 mr-2 text-xs"></i><span><strong>Avoid Too Far:</strong> Crack becomes too small.</span></li>
+                    <li class="flex items-start"><i class="fas fa-times text-red-600 mt-1 mr-2 text-xs"></i><span><strong>Avoid Too Close:</strong> Complete loss of context.</span></li>
+                </ul>
+            </div>
+
+            <div class="bg-amber-50 p-5 rounded-2xl border-t-4 border-amber-400 shadow-sm hover:shadow-md hover:bg-amber-100 transition-all">
+                <h3 class="font-bold text-amber-900 mb-3 flex items-center text-sm uppercase tracking-wide">
+                    <i class="fas fa-exclamation-triangle text-amber-600 mr-2"></i> <span class="text-amber-700 mr-1">05.</span> Pixel Constraint (Critical)
+                </h3>
+                <ul class="text-sm text-amber-800 space-y-2">
+                    <li class="flex items-start"><i class="fas fa-ruler text-amber-600 mt-1 mr-2 text-xs"></i><span>Crack width <strong>MUST be > 10 pixels</strong>.</span></li>
+                    <li class="flex items-start"><i class="fas fa-crosshairs text-amber-600 mt-1 mr-2 text-xs"></i><span><strong>Preferred range:</strong> 10–25 pixels.</span></li>
+                    <li class="flex items-start"><i class="fas fa-check-double text-amber-600 mt-1 mr-2 text-xs"></i><span>Ensures reliable detection and accurate severity classification.</span></li>
+                </ul>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl border-t-4 border-slate-200 shadow-sm hover:shadow-md hover:border-blue-400 transition-all">
+                <h3 class="font-bold text-slate-900 mb-3 flex items-center text-sm uppercase tracking-wide">
+                    <span class="text-blue-600 mr-2">06.</span> Zoom Guidelines
+                </h3>
+                <ul class="text-sm text-slate-600 space-y-2">
+                    <li class="flex items-start"><i class="fas fa-check text-emerald-600 mt-1 mr-2 text-xs"></i><span><strong>Preferred:</strong> Move closer or use optical zoom.</span></li>
+                    <li class="flex items-start"><i class="fas fa-times text-red-600 mt-1 mr-2 text-xs"></i><span><strong>Avoid:</strong> Digital zoom (causes blur & interpolation).</span></li>
+                    <li class="flex items-start"><i class="fas fa-balance-scale text-blue-600 mt-1 mr-2 text-xs"></i><span>Do not over-zoom. Maintain structural context.</span></li>
+                </ul>
+            </div>
+
+            <div class="bg-emerald-50 p-5 rounded-2xl border-t-4 border-emerald-400 shadow-sm hover:shadow-md hover:bg-emerald-100 transition-all md:col-span-2 lg:col-span-2">
+                <h3 class="font-bold text-emerald-900 mb-3 flex items-center text-sm uppercase tracking-wide">
+                    <i class="fas fa-coins text-emerald-600 mr-2"></i> <span class="text-emerald-700 mr-1">07.</span> Coin as Reference Object (Calibration)
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-emerald-800">
+                    <div>
+                        <p class="text-emerald-900 font-semibold text-xs mb-1 uppercase tracking-wider">Placement & Visibility</p>
+                        <ul class="space-y-1">
+                            <li><i class="fas fa-circle text-[6px] mr-2 text-emerald-600 align-middle"></i>Place on same surface plane as crack</li>
+                            <li><i class="fas fa-circle text-[6px] mr-2 text-emerald-600 align-middle"></i>Close to crack but not covering it</li>
+                            <li><i class="fas fa-circle text-[6px] mr-2 text-emerald-600 align-middle"></i>Must be fully visible & flat (not tilted)</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <p class="text-emerald-900 font-semibold text-xs mb-1 uppercase tracking-wider">Consistency & Pixels</p>
+                        <ul class="space-y-1">
+                            <li><i class="fas fa-circle text-[6px] mr-2 text-emerald-600 align-middle"></i>Use same coin type throughout dataset</li>
+                            <li><i class="fas fa-circle text-[6px] mr-2 text-emerald-600 align-middle"></i>Coin diameter ≈ 80–120 pixels</li>
+                            <li><i class="fas fa-circle text-[6px] mr-2 text-emerald-600 align-middle"></i>Crack width must remain > 10 pixels</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl border-t-4 border-slate-200 shadow-sm hover:shadow-md hover:border-blue-400 transition-all">
+                <h3 class="font-bold text-slate-900 mb-3 flex items-center text-sm uppercase tracking-wide">
+                    <span class="text-blue-600 mr-2">08.</span> Background & Noise
+                </h3>
+                <ul class="text-sm text-slate-600 space-y-2">
+                    <li class="flex items-start"><i class="fas fa-broom text-blue-600 mt-1 mr-2 text-xs"></i><span>Minimize irrelevant objects in frame.</span></li>
+                    <li class="flex items-start"><i class="fas fa-times text-red-600 mt-1 mr-2 text-xs"></i><span><strong>Avoid:</strong> Shadows of people/tools and patterns resembling cracks.</span></li>
+                    <li class="flex items-start"><i class="fas fa-bullseye text-emerald-600 mt-1 mr-2 text-xs"></i><span>Keep focus strictly on structural surface.</span></li>
+                </ul>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl border-t-4 border-slate-200 shadow-sm hover:shadow-md hover:border-blue-400 transition-all">
+                <h3 class="font-bold text-slate-900 mb-3 flex items-center text-sm uppercase tracking-wide">
+                    <span class="text-blue-600 mr-2">09.</span> Dataset Diversity
+                </h3>
+                <ul class="text-sm text-slate-600 space-y-2">
+                    <li class="flex items-start"><i class="fas fa-layer-group text-blue-600 mt-1 mr-2 text-xs"></i><span>Vary surfaces (concrete, asphalt) and types (transverse, etc).</span></li>
+                    <li class="flex items-start"><i class="fas fa-cloud-sun text-emerald-600 mt-1 mr-2 text-xs"></i><span>Mix conditions (dry/wet, clean/dusty).</span></li>
+                    <li class="flex items-start"><i class="fas fa-map-marker-alt text-amber-600 mt-1 mr-2 text-xs"></i><span>Capture different locations and structures.</span></li>
+                </ul>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl border-t-4 border-slate-200 shadow-sm hover:shadow-md hover:border-blue-400 transition-all">
+                <h3 class="font-bold text-slate-900 mb-3 flex items-center text-sm uppercase tracking-wide">
+                    <span class="text-blue-600 mr-2">10.</span> Dataset Consistency
+                </h3>
+                <ul class="text-sm text-slate-600 space-y-2">
+                    <li class="flex items-start"><i class="fas fa-check-square text-emerald-600 mt-1 mr-2 text-xs"></i><span>Maintain similar aspect ratios and consistent capture styles.</span></li>
+                    <li class="flex items-start"><i class="fas fa-times text-red-600 mt-1 mr-2 text-xs"></i><span><strong>Avoid:</strong> Large variations in zoom levels and scale across the dataset.</span></li>
+                </ul>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl border-t-4 border-slate-200 shadow-sm hover:shadow-md hover:border-blue-400 transition-all">
+                <h3 class="font-bold text-slate-900 mb-3 flex items-center text-sm uppercase tracking-wide">
+                    <span class="text-blue-600 mr-2">11.</span> Annotation Friendly
+                </h3>
+                <ul class="text-sm text-slate-600 space-y-2">
+                    <li class="flex items-start"><i class="fas fa-pen-nib text-blue-600 mt-1 mr-2 text-xs"></i><span>Cracks must be clearly distinguishable and not occluded.</span></li>
+                    <li class="flex items-start"><i class="fas fa-draw-polygon text-emerald-600 mt-1 mr-2 text-xs"></i><span>Ensure boundaries are highly visible for accurate labeling.</span></li>
+                </ul>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl border-t-4 border-slate-200 shadow-sm hover:shadow-md hover:border-blue-400 transition-all">
+                <h3 class="font-bold text-slate-900 mb-3 flex items-center text-sm uppercase tracking-wide">
+                    <span class="text-blue-600 mr-2">12.</span> Avoid Redundancy
+                </h3>
+                <ul class="text-sm text-slate-600 space-y-2">
+                    <li class="flex items-start"><i class="fas fa-ban text-red-600 mt-1 mr-2 text-xs"></i><span>Do not capture completely identical images.</span></li>
+                    <li class="flex items-start"><i class="fas fa-random text-emerald-600 mt-1 mr-2 text-xs"></i><span>Instead, include slight variations in angle, lighting, and position.</span></li>
+                </ul>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl border-t-4 border-slate-200 shadow-sm hover:shadow-md hover:border-blue-400 transition-all">
+                <h3 class="font-bold text-slate-900 mb-3 flex items-center text-sm uppercase tracking-wide">
+                    <span class="text-blue-600 mr-2">13.</span> Severity Support
+                </h3>
+                <ul class="text-sm text-slate-600 space-y-2">
+                    <li class="flex items-start"><i class="fas fa-chart-pie text-blue-600 mt-1 mr-2 text-xs"></i><span>Ensure dataset balance across all severity levels.</span></li>
+                    <li class="flex items-start"><i class="fas fa-ruler-horizontal text-emerald-600 mt-1 mr-2 text-xs"></i><span>Capture widths: Minor (>10px), Moderate, and Severe (wider).</span></li>
+                </ul>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl border-t-4 border-slate-200 shadow-sm hover:shadow-md hover:border-blue-400 transition-all">
+                <h3 class="font-bold text-slate-900 mb-3 flex items-center text-sm uppercase tracking-wide">
+                    <span class="text-blue-600 mr-2">14.</span> Capture Stability
+                </h3>
+                <ul class="text-sm text-slate-600 space-y-2">
+                    <li class="flex items-start"><i class="fas fa-hand-holding text-emerald-600 mt-1 mr-2 text-xs"></i><span>Keep hands steady or use a tripod to avoid motion blur.</span></li>
+                    <li class="flex items-start"><i class="fas fa-eye text-blue-600 mt-1 mr-2 text-xs"></i><span>Ensure proper focus, especially when positioned close to the surface.</span></li>
+                </ul>
+            </div>
+
         </div>
     </section>
 
@@ -119,17 +243,17 @@
             <span class="text-xs font-mono text-slate-500">American Concrete Institute</span>
         </div>
         
-        <div class="glass card-hover rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
+        <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
             <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm text-slate-700">
+                <table class="w-full text-left text-sm text-slate-600">
                     <thead class="bg-slate-50 text-xs uppercase font-bold text-slate-500 border-b border-slate-200">
                         <tr>
                             <th scope="col" class="px-6 py-4">Crack Width (mm)</th>
                             <th scope="col" class="px-6 py-4">Classification</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-100">
-                        <tr class="hover:bg-slate-50/50 transition-colors bg-white">
+                    <tbody class="divide-y divide-slate-200">
+                        <tr class="hover:bg-slate-50 transition-colors">
                             <td class="px-6 py-4 font-medium text-slate-900">&lt; 0.10 mm</td>
                             <td class="px-6 py-4">Hairline crack</td>
                         </tr>
@@ -137,11 +261,11 @@
                             <td class="px-6 py-4 font-medium text-slate-900">0.10 &ndash; 0.30 mm</td>
                             <td class="px-6 py-4">Fine / Minor</td>
                         </tr>
-                        <tr class="hover:bg-slate-50/50 transition-colors bg-white">
+                        <tr class="hover:bg-slate-50 transition-colors">
                             <td class="px-6 py-4 font-medium text-slate-900">0.30 &ndash; 0.50 mm</td>
                             <td class="px-6 py-4">Moderate</td>
                         </tr>
-                        <tr class="hover:bg-red-50 transition-colors bg-red-50/30 border-b border-red-100">
+                        <tr class="hover:bg-red-50 transition-colors bg-red-50/30 border-b-2 border-red-200">
                             <td class="px-6 py-4 font-bold text-red-600">&gt; 0.50 mm</td>
                             <td class="px-6 py-4 font-bold text-red-600">Severe</td>
                         </tr>

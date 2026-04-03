@@ -260,7 +260,7 @@
         doc.save(`CrackAI_Report.pdf`);
     });
 
-    // DYNAMIC UI INJECTION - UPDATED TO LIGHT THEME
+    // DYNAMIC UI INJECTION
     function createLoadingCard(id, filename) {
         return `<div id="${id}" class="glass rounded-2xl p-6 fade-in border-l-4 border-slate-300 shadow-md mb-6 card-hover">
             <div class="flex items-center space-x-4 mb-4">
@@ -276,6 +276,9 @@
 
         let statsHtml = '';
         let recommendationHtml = '';
+        
+        // Grab the model's actual confidence returned from the backend (or fallback to N/A)
+        const modelConf = data.data.model_conf ? (data.data.model_conf * 100).toFixed(1) + '%' : 'N/A';
 
         if (data.data.mode === 'crack_only') {
             const detected = data.data.crack_detected;
@@ -288,13 +291,9 @@
                 <p class="text-slate-600 text-xs uppercase font-bold mb-2">Detection Status</p>
                 <p class="text-2xl font-extrabold ${statusColor}">${detected ? 'YES - Crack Detected' : 'NO - Surface Clear'}</p>
             </div>
-            <div class="bg-white p-4 rounded-xl border border-slate-200 text-center shadow-sm">
-                <p class="text-slate-500 text-[10px] uppercase font-bold mb-1">Conf Threshold</p>
-                <p class="text-xl font-bold text-slate-900">${conf}</p>
-            </div>
-            <div class="bg-white p-4 rounded-xl border border-slate-200 text-center shadow-sm">
-                <p class="text-slate-500 text-[10px] uppercase font-bold mb-1">IOU Threshold</p>
-                <p class="text-xl font-bold text-slate-900">${iou}</p>
+            <div class="col-span-full md:col-span-2 bg-white p-4 rounded-xl border border-slate-200 text-center shadow-sm flex flex-col justify-center">
+                <p class="text-cyan-600 text-[10px] uppercase font-bold mb-1">Model Detection Confidence</p>
+                <p class="text-2xl font-bold text-slate-900">${modelConf}</p>
             </div>
         `;
         } else {
@@ -312,8 +311,8 @@
                 <p class="text-sm font-bold text-blue-600">${data.data.severity}</p>
             </div>
             <div class="bg-white p-4 rounded-xl border border-slate-200 text-center shadow-sm">
-                <p class="text-slate-500 text-[10px] uppercase font-bold mb-1">Conf / IOU</p>
-                <p class="text-sm font-bold text-slate-900">${conf} / ${iou}</p>
+                <p class="text-cyan-600 text-[10px] uppercase font-bold mb-1">Model Confidence</p>
+                <p class="text-sm font-bold text-slate-900">${modelConf}</p>
             </div>
         `;
         }

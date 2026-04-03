@@ -57,6 +57,11 @@ class CrackDetector:
             
             crack_detected = len(masks) > 0
             
+            # Extract actual model confidence
+            model_conf = 0.0
+            if crack_detected and crack_results.boxes is not None and len(crack_results.boxes.conf) > 0:
+                model_conf = round(float(crack_results.boxes.conf.max().item()), 3)
+            
             if crack_detected:
                 merged_mask = np.zeros((h_orig, w_orig), dtype=np.uint8)
                 for m in masks:
@@ -80,7 +85,8 @@ class CrackDetector:
             
             return {
                 'mode': 'crack_only',
-                'crack_detected': crack_detected
+                'crack_detected': crack_detected,
+                'model_conf': model_conf
             }, None
 
         # ==========================================
@@ -108,6 +114,11 @@ class CrackDetector:
 
             if len(masks) == 0:
                 return None, "No cracks detected."
+
+            # Extract actual model confidence
+            model_conf = 0.0
+            if crack_results.boxes is not None and len(crack_results.boxes.conf) > 0:
+                model_conf = round(float(crack_results.boxes.conf.max().item()), 3)
 
             merged_mask = np.zeros((h_orig, w_orig), dtype=np.uint8)
             for m in masks:
@@ -165,5 +176,6 @@ class CrackDetector:
                 'avg_width': round(avg_w_mm, 2), 
                 'scale': round(mm_per_pixel, 4),
                 'severity': severity_label,
-                'is_safe': is_safe
+                'is_safe': is_safe,
+                'model_conf': model_conf
             }, None
