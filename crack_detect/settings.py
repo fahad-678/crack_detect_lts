@@ -130,6 +130,6 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-LOGIN_REDIRECT_URL = 'index'  # Redirect here after login
+LOGIN_REDIRECT_URL = 'home'  # Redirect here after login
 LOGOUT_REDIRECT_URL = 'login' # Redirect here after logout
 LOGIN_URL = 'login'           # Redirect here if unauthorized

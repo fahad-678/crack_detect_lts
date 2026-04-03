@@ -3,70 +3,70 @@
 {% block title %}Pricing | CrackAI{% endblock %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto p-6 py-16">
+<div class="max-w-7xl mx-auto p-6 py-16 relative z-10 fade-in">
     
     <div class="text-center mb-16">
-        <h1 class="text-4xl font-extrabold text-white mb-4">Choose Your Plan</h1>
-        <p class="text-slate-400 max-w-2xl mx-auto">Unlock advanced batch processing and export capabilities with our Pro tier.</p>
+        <h1 class="text-4xl font-extrabold text-slate-900 mb-4">Choose Your Plan</h1>
+        <p class="text-slate-600 max-w-2xl mx-auto text-lg">Unlock advanced batch processing and export capabilities with our Pro tier.</p>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
         
-        <div class="glass p-8 rounded-3xl border border-slate-700 relative overflow-hidden">
-            <div class="absolute top-0 right-0 bg-slate-800 px-4 py-1 rounded-bl-xl text-xs font-bold text-slate-400 uppercase">
+        <div class="glass card-hover p-8 rounded-3xl border border-slate-200 relative overflow-hidden shadow-sm">
+            <div class="absolute top-0 right-0 bg-slate-100 px-4 py-1 rounded-bl-xl text-xs font-bold text-slate-500 uppercase border-b border-l border-slate-200">
                 Current Plan
             </div>
-            <h3 class="text-xl font-bold text-white mb-2">Basic</h3>
+            <h3 class="text-xl font-bold text-slate-900 mb-2">Basic</h3>
             <div class="flex items-end mb-6">
-                <span class="text-4xl font-black text-white">$0</span>
-                <span class="text-slate-400 ml-1 mb-1">/month</span>
+                <span class="text-4xl font-black text-slate-900">$0</span>
+                <span class="text-slate-500 ml-1 mb-1 font-medium">/month</span>
             </div>
-            <p class="text-slate-400 text-sm mb-8">Essential tools for students and hobbyists.</p>
+            <p class="text-slate-600 text-sm mb-8">Essential tools for students and hobbyists.</p>
             
             <ul class="space-y-4 mb-8">
-                <li class="flex items-center text-slate-300">
-                    <i class="fas fa-check text-emerald-500 mr-3"></i> 5 Analyses per day
+                <li class="flex items-center text-slate-700">
+                    <i class="fas fa-check text-emerald-500 mr-3 text-lg"></i> 5 Analyses per day
                 </li>
-                <li class="flex items-center text-slate-300">
-                    <i class="fas fa-check text-emerald-500 mr-3"></i> Standard Resolution
+                <li class="flex items-center text-slate-700">
+                    <i class="fas fa-check text-emerald-500 mr-3 text-lg"></i> Standard Resolution
                 </li>
-                <li class="flex items-center text-slate-300">
-                    <i class="fas fa-check text-emerald-500 mr-3"></i> Web Access Only
+                <li class="flex items-center text-slate-700">
+                    <i class="fas fa-check text-emerald-500 mr-3 text-lg"></i> Web Access Only
                 </li>
             </ul>
 
-            <button class="w-full bg-slate-700 text-slate-400 font-bold py-3 rounded-xl cursor-not-allowed opacity-50">
+            <button class="w-full bg-slate-100 text-slate-400 font-bold py-3 rounded-xl cursor-not-allowed border border-slate-200">
                 Active
             </button>
         </div>
 
-        <div class="glass p-8 rounded-3xl border-2 border-blue-600 relative transform md:-translate-y-4 shadow-2xl shadow-blue-900/20">
-            <div class="absolute top-0 right-0 bg-blue-600 px-4 py-1 rounded-bl-xl text-xs font-bold text-white uppercase shadow-lg">
+        <div class="glass card-hover p-8 rounded-3xl border-2 border-blue-500 relative transform md:-translate-y-4 shadow-xl shadow-blue-900/5">
+            <div class="absolute top-0 right-0 bg-blue-600 px-4 py-1 rounded-bl-xl text-xs font-bold text-white uppercase shadow-md">
                 Recommended
             </div>
-            <h3 class="text-xl font-bold text-white mb-2">Pro Member</h3>
+            <h3 class="text-xl font-bold text-slate-900 mb-2">Pro Member</h3>
             <div class="flex items-end mb-6">
-                <span class="text-4xl font-black text-white">$29</span>
-                <span class="text-slate-400 ml-1 mb-1">/month</span>
+                <span class="text-4xl font-black text-blue-600">$29</span>
+                <span class="text-slate-500 ml-1 mb-1 font-medium">/month</span>
             </div>
-            <p class="text-slate-400 text-sm mb-8">For professional engineers and inspectors.</p>
+            <p class="text-slate-600 text-sm mb-8">For professional engineers and inspectors.</p>
             
             <ul class="space-y-4 mb-8">
-                <li class="flex items-center text-white">
-                    <i class="fas fa-check text-blue-400 mr-3"></i> <strong>Unlimited</strong> Analyses
+                <li class="flex items-center text-slate-800 font-medium">
+                    <i class="fas fa-check text-blue-500 mr-3 text-lg"></i> <strong>Unlimited</strong> Analyses
                 </li>
-                <li class="flex items-center text-white">
-                    <i class="fas fa-check text-blue-400 mr-3"></i> 4K High-Res Output
+                <li class="flex items-center text-slate-800 font-medium">
+                    <i class="fas fa-check text-blue-500 mr-3 text-lg"></i> 4K High-Res Output
                 </li>
-                <li class="flex items-center text-white">
-                    <i class="fas fa-check text-blue-400 mr-3"></i> PDF Report Generation
+                <li class="flex items-center text-slate-800 font-medium">
+                    <i class="fas fa-check text-blue-500 mr-3 text-lg"></i> PDF Report Generation
                 </li>
-                <li class="flex items-center text-white">
-                    <i class="fas fa-check text-blue-400 mr-3"></i> Priority Support
+                <li class="flex items-center text-slate-800 font-medium">
+                    <i class="fas fa-check text-blue-500 mr-3 text-lg"></i> Priority Support
                 </li>
             </ul>
 
-            <button class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-blue-600/20">
+            <button class="w-full btn-interactive bg-blue-600 text-white font-bold py-3 rounded-xl shadow-md">
                 Upgrade Now
             </button>
         </div>
