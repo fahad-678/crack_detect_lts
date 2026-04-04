@@ -29,7 +29,8 @@ def compute_width(mask):
         return None, None, None
     widths = dist[ys, xs] * 2
     idx = np.argmax(widths)
-    return widths[idx], (xs[idx], ys[idx]), widths
+    # Ensure coordinates are standard Python ints to prevent OpenCV crashes
+    return float(widths[idx]), (int(xs[idx]), int(ys[idx])), widths
 
 # ---------------- MAIN DETECTOR CLASS ----------------
 
@@ -106,7 +107,7 @@ class CrackDetector:
             if px <= 0:
                 return None, "Invalid coin dimensions."
                 
-            mm_per_pixel = coin_diameter / px
+            mm_per_pixel = float(coin_diameter / px)
 
             # 2. Crack Segmentation 
             crack_results = self.crack_model(img, conf=conf, iou=iou)[0]
@@ -130,9 +131,10 @@ class CrackDetector:
             if width_px is None:
                 return None, "Measurement failed."
 
-            max_w_mm = width_px * mm_per_pixel
-            avg_w_mm = np.mean(all_widths) * mm_per_pixel
-            max_x, max_y = point
+            # Explicitly cast to standard Python floats to prevent JSON serialization errors
+            max_w_mm = float(width_px * mm_per_pixel)
+            avg_w_mm = float(np.mean(all_widths) * mm_per_pixel)
+            max_x, max_y = point 
 
             # 4. Updated Severity Classification Logic
             if max_w_mm < 0.10:
@@ -161,11 +163,11 @@ class CrackDetector:
             cv2.rectangle(vis, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 255), 2)
 
             h, w = vis.shape[:2]
-            max_width = 720
-            if w > max_width:
-                scale_ratio = max_width / w
+            max_width_display = 720
+            if w > max_width_display:
+                scale_ratio = max_width_display / w
                 new_h = int(h * scale_ratio)
-                vis = cv2.resize(vis, (max_width, new_h), interpolation=cv2.INTER_AREA)
+                vis = cv2.resize(vis, (max_width_display, new_h), interpolation=cv2.INTER_AREA)
 
             cv2.imwrite(output_path, vis)
             

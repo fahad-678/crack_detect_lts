@@ -177,7 +177,7 @@
 
                 if (data.success) {
                     const maxWidth = parseFloat(data.data.max_width || 0);
-                    const calibratedWidth = (maxWidth * 0.9).toFixed(2);
+                    const calibratedWidth = maxWidth.toFixed(2);
 
                     let recText = "";
                     let actions = "";
