@@ -1,6 +1,6 @@
 {% extends 'detector/base.html' %}
 
-{% block title %}CrackAI | Live Demo{% endblock %}
+{% block title %}Concrete Crack Detection AI | Live Demo{% endblock %}
 
 {% block content %}
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-10">
@@ -177,7 +177,7 @@
 
                 if (data.success) {
                     const maxWidth = parseFloat(data.data.max_width || 0);
-                    const calibratedWidth = maxWidth.toFixed(2);
+                    const calibratedWidth = (maxWidth * 0.9).toFixed(2);
 
                     let recText = "";
                     let actions = "";
@@ -233,7 +233,7 @@
         })));
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "Crack Analysis");
-        XLSX.writeFile(workbook, `CrackAI_Report_${Date.now()}.xlsx`);
+        XLSX.writeFile(workbook, `Concrete_Crack_Detection_AI_Report_${Date.now()}.xlsx`);
     });
 
     // PDF EXPORT
@@ -244,7 +244,7 @@
         doc.rect(0, 0, 297, 40, 'F');
         doc.setTextColor(15, 23, 42);
         doc.setFontSize(22);
-        doc.text("CrackAI Structural Analysis Report", 14, 20);
+        doc.text("Concrete Crack Detection AI Structural Analysis Report", 14, 20);
         doc.setFontSize(10);
         doc.setTextColor(100, 116, 139);
         doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 30);
@@ -257,7 +257,7 @@
             headStyles: { fillColor: [37, 99, 235], textColor: [255, 255, 255] },
             styles: { textColor: [51, 65, 85] }
         });
-        doc.save(`CrackAI_Report.pdf`);
+        doc.save(`Concrete_Crack_Detection_AI_Report.pdf`);
     });
 
     // DYNAMIC UI INJECTION
@@ -299,7 +299,7 @@
         } else {
             statsHtml = `
             <div class="bg-white p-4 rounded-xl border border-slate-200 text-center shadow-sm">
-                <p class="text-emerald-600 text-[10px] uppercase font-bold mb-1">Calibrated Width</p>
+                <p class="text-emerald-600 text-[10px] uppercase font-bold mb-1">Calibrated Width (Max Width * 0.9)</p>
                 <p class="text-xl font-bold text-slate-900">${calibrated}<span class="text-xs ml-1 text-slate-500">mm</span></p>
             </div>
             <div class="bg-white p-4 rounded-xl border border-slate-200 text-center shadow-sm">
