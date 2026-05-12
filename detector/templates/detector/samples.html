@@ -1,6 +1,7 @@
 {% extends 'detector/base.html' %}
+{% load static %}
 
-{% block title %}Concrete Crack Detection AI | Sample Images{% endblock %}
+{% block title %}StructInsight AI | Sample Images{% endblock %}
 
 {% block content %}
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-20">
@@ -17,77 +18,84 @@
         
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             
+            <!-- SAMPLE 1 -->
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-emerald-400 transition-all">
                 <div class="bg-slate-100 rounded-xl h-48 w-full mb-4 flex items-center justify-center overflow-hidden relative group">
-                    <div class="absolute inset-0 flex flex-col items-center justify-center text-slate-500 group-hover:scale-110 transition-transform">
-                        <i class="fas fa-camera-rotate text-4xl mb-2 text-emerald-500/80"></i>
-                        <span class="text-xs font-bold uppercase text-slate-600">Sample 1.jpg</span>
+                    <img src="{% static 'sample_images/sample1.jpg' %}" alt="Clear and Perpendicular Sample" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-slate-900/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <span class="text-white font-bold uppercase tracking-wider text-sm shadow-sm">Sample 1.jpg</span>
                     </div>
                 </div>
                 <h3 class="text-slate-900 font-bold mb-1">1. Clear & Perpendicular</h3>
                 <p class="text-xs text-slate-600 leading-relaxed">Capture the image with the camera held perpendicular (90°) to the surface. Ensure the crack is sharp and clearly visible, with no angular distortion.</p>
             </div>
 
+            <!-- SAMPLE 2 -->
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-400 transition-all">
                 <div class="bg-slate-100 rounded-xl h-48 w-full mb-4 flex items-center justify-center overflow-hidden relative group">
-                    <div class="absolute inset-0 flex flex-col items-center justify-center text-slate-500 group-hover:scale-110 transition-transform">
-                        <i class="fas fa-ruler-combined text-4xl mb-2 text-blue-500/80"></i>
-                        <span class="text-xs font-bold uppercase text-slate-600">Sample 2.jpg</span>
+                    <img src="{% static 'sample_images/sample2.jpg' %}" alt="Proper Distance Sample" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-slate-900/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <span class="text-white font-bold uppercase tracking-wider text-sm shadow-sm">Sample 2.jpg</span>
                     </div>
                 </div>
                 <h3 class="text-slate-900 font-bold mb-1">2. Proper Distance (Pixel Rule)</h3>
                 <p class="text-xs text-slate-600 leading-relaxed">Adjust your distance so that the crack width appears greater than 10 pixels. Avoid capturing from too far, as small cracks may not be detected accurately.</p>
             </div>
 
+            <!-- SAMPLE 3 -->
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-amber-400 transition-all">
                 <div class="bg-slate-100 rounded-xl h-48 w-full mb-4 flex items-center justify-center overflow-hidden relative group">
-                    <div class="absolute inset-0 flex flex-col items-center justify-center text-slate-500 group-hover:scale-110 transition-transform">
-                        <i class="fas fa-sun text-4xl mb-2 text-amber-500/80"></i>
-                        <span class="text-xs font-bold uppercase text-slate-600">Sample 3.jpg</span>
+                    <img src="{% static 'sample_images/sample3.jpg' %}" alt="Good Lighting Sample" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-slate-900/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <span class="text-white font-bold uppercase tracking-wider text-sm shadow-sm">Sample 3.jpg</span>
                     </div>
                 </div>
                 <h3 class="text-slate-900 font-bold mb-1">3. Good Lighting</h3>
                 <p class="text-xs text-slate-600 leading-relaxed">Ensure uniform lighting conditions. Avoid shadows, glare, or overly dark scenes so that crack edges remain clearly distinguishable.</p>
             </div>
 
+            <!-- SAMPLE 4 -->
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-purple-400 transition-all">
                 <div class="bg-slate-100 rounded-xl h-48 w-full mb-4 flex items-center justify-center overflow-hidden relative group">
-                    <div class="absolute inset-0 flex flex-col items-center justify-center text-slate-500 group-hover:scale-110 transition-transform">
-                        <i class="fas fa-compress text-4xl mb-2 text-purple-500/80"></i>
-                        <span class="text-xs font-bold uppercase text-slate-600">Sample 4.jpg</span>
+                    <img src="{% static 'sample_images/sample4.jpg' %}" alt="Sharp Focus Sample" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-slate-900/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <span class="text-white font-bold uppercase tracking-wider text-sm shadow-sm">Sample 4.jpg</span>
                     </div>
                 </div>
                 <h3 class="text-slate-900 font-bold mb-1">4. Sharp Focus</h3>
                 <p class="text-xs text-slate-600 leading-relaxed">Make sure the image is in focus and free from motion blur. Blurry images reduce detection accuracy significantly.</p>
             </div>
 
+            <!-- SAMPLE 5 -->
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-emerald-400 transition-all">
                 <div class="bg-slate-100 rounded-xl h-48 w-full mb-4 flex items-center justify-center overflow-hidden relative group">
-                    <div class="absolute inset-0 flex flex-col items-center justify-center text-slate-500 group-hover:scale-110 transition-transform">
-                        <i class="fas fa-coins text-4xl mb-2 text-emerald-500/80"></i>
-                        <span class="text-xs font-bold uppercase text-slate-600">Sample 5.jpg</span>
+                    <img src="{% static 'sample_images/sample5.jpg' %}" alt="Proper Coin Placement Sample" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-slate-900/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <span class="text-white font-bold uppercase tracking-wider text-sm shadow-sm">Sample 5.jpg</span>
                     </div>
                 </div>
                 <h3 class="text-slate-900 font-bold mb-1">5. Proper Coin Placement</h3>
                 <p class="text-xs text-slate-600 leading-relaxed">Place a coin on the same surface near the crack without covering it. This helps the system estimate real-world crack dimensions accurately.</p>
             </div>
 
+            <!-- SAMPLE 6 -->
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-400 transition-all">
                 <div class="bg-slate-100 rounded-xl h-48 w-full mb-4 flex items-center justify-center overflow-hidden relative group">
-                    <div class="absolute inset-0 flex flex-col items-center justify-center text-slate-500 group-hover:scale-110 transition-transform">
-                        <i class="fas fa-crop text-4xl mb-2 text-blue-500/80"></i>
-                        <span class="text-xs font-bold uppercase text-slate-600">Sample 6.jpg</span>
+                    <img src="{% static 'sample_images/sample6.jpg' %}" alt="Balanced Framing Sample" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-slate-900/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <span class="text-white font-bold uppercase tracking-wider text-sm shadow-sm">Sample 6.jpg</span>
                     </div>
                 </div>
                 <h3 class="text-slate-900 font-bold mb-1">6. Balanced Framing</h3>
                 <p class="text-xs text-slate-600 leading-relaxed">Capture both the crack and some surrounding surface. Avoid extreme close-ups or overly zoomed-out images.</p>
             </div>
 
+            <!-- SAMPLE 7 -->
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-red-400 transition-all md:col-span-2 lg:col-span-1">
                 <div class="bg-slate-100 rounded-xl h-48 w-full mb-4 flex items-center justify-center overflow-hidden relative group">
-                    <div class="absolute inset-0 flex flex-col items-center justify-center text-slate-500 group-hover:scale-110 transition-transform">
-                        <i class="fas fa-search-minus text-4xl mb-2 text-red-500/80"></i>
-                        <span class="text-xs font-bold uppercase text-slate-600">Sample 7.jpg</span>
+                    <img src="{% static 'sample_images/sample7.jpg' %}" alt="No Digital Zoom Sample" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-slate-900/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <span class="text-white font-bold uppercase tracking-wider text-sm shadow-sm">Sample 7.jpg</span>
                     </div>
                 </div>
                 <h3 class="text-slate-900 font-bold mb-1">7. No Digital Zoom</h3>
