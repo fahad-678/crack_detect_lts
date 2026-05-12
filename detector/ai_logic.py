@@ -89,34 +89,56 @@ class CrackDetector:
                 'crack_detected': crack_detected,
                 'model_conf': model_conf
             }, None
-
+            
         # ==========================================
-        # MODE 2: DETECTION + SEVERITY (Needs Coin)
+        # MODE 2: DETECTION + SEVERITY (Coin Optional Fallback)
         # ==========================================
         else:
-            # 1. Coin Detection & Calibration 
+            # 1. Coin Detection 
             coin_results = self.coin_model(img, conf=conf, iou=iou)[0]
-            if coin_results.boxes is None or len(coin_results.boxes) == 0:
-                return None, "Reference coin not found. Ensure coin is visible or use 'Crack Detection Only' mode."
+            coin_detected = coin_results.boxes is not None and len(coin_results.boxes) > 0
             
-            boxes = coin_results.boxes.xyxy.cpu().numpy().tolist()
-            box = boxes[0] 
-            x1, y1, x2, y2 = box
+            x1, y1, x2, y2 = 0, 0, 0, 0
+            mm_per_pixel = 1.0
             
-            px = max(x2 - x1, y2 - y1)
-            if px <= 0:
-                return None, "Invalid coin dimensions."
-                
-            mm_per_pixel = float(coin_diameter / px)
+            if coin_detected:
+                boxes = coin_results.boxes.xyxy.cpu().numpy().tolist()
+                box = boxes[0] 
+                x1, y1, x2, y2 = box
+                px = max(x2 - x1, y2 - y1)
+                if px > 0:
+                    mm_per_pixel = float(coin_diameter / px)
+                else:
+                    coin_detected = False # Invalid coin box
 
             # 2. Crack Segmentation 
             crack_results = self.crack_model(img, conf=conf, iou=iou)[0]
             masks = instance_masks_from_result(crack_results, (h_orig, w_orig))
+            crack_detected = len(masks) > 0
 
-            if len(masks) == 0:
-                return None, "No cracks detected."
+            # 3. Handle Empty States gracefully (No Crack)
+            if not crack_detected:
+                # Draw coin box if detected to prove the system ran
+                if coin_detected:
+                    cv2.rectangle(vis, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 255), 2)
+                    
+                h, w = vis.shape[:2]
+                max_width_display = 720
+                if w > max_width_display:
+                    scale_ratio = max_width_display / w
+                    new_h = int(h * scale_ratio)
+                    vis = cv2.resize(vis, (max_width_display, new_h), interpolation=cv2.INTER_AREA)
 
-            # Extract actual model confidence
+                cv2.imwrite(output_path, vis)
+                
+                return {
+                    'mode': 'crack_severity',
+                    'crack_detected': False,
+                    'coin_detected': coin_detected,
+                    'unit': 'mm' if coin_detected else 'px'
+                }, None
+
+            # Extract model confidence for the crack
             model_conf = 0.0
             if crack_results.boxes is not None and len(crack_results.boxes.conf) > 0:
                 model_conf = round(float(crack_results.boxes.conf.max().item()), 3)
@@ -126,31 +148,33 @@ class CrackDetector:
                 merged_mask = np.logical_or(merged_mask, m)
             merged_mask = merged_mask.astype(np.uint8)
 
-            # 3. Measurement
+            # 4. Measurement
             width_px, point, all_widths = compute_width(merged_mask)
             if width_px is None:
-                return None, "Measurement failed."
+                return None, "Measurement failed due to complex crack geometry."
 
-            # Explicitly cast to standard Python floats to prevent JSON serialization errors
-            max_w_mm = float(width_px * mm_per_pixel)
-            avg_w_mm = float(np.mean(all_widths) * mm_per_pixel)
             max_x, max_y = point 
 
-            # 4. Updated Severity Classification Logic
-            if max_w_mm < 0.10:
-                severity_label = "Hairline crack"
-                is_safe = True
-            elif max_w_mm <= 0.30:
-                severity_label = "Fine / Minor"
-                is_safe = True
-            elif max_w_mm <= 0.50:
-                severity_label = "Moderate"
-                is_safe = False
+            # 5. Calculation & Classification
+            unit = "mm" if coin_detected else "px"
+            is_safe = True
+            
+            if coin_detected:
+                max_w = float(width_px * mm_per_pixel)
+                avg_w = float(np.mean(all_widths) * mm_per_pixel)
+                
+                # Standard ACI Classification
+                if max_w < 0.10: severity_label = "Hairline crack"
+                elif max_w <= 0.30: severity_label = "Fine / Minor"
+                elif max_w <= 0.50: severity_label = "Moderate"; is_safe = False
+                else: severity_label = "Severe"; is_safe = False
             else:
-                severity_label = "Severe"
-                is_safe = False
+                max_w = float(width_px)
+                avg_w = float(np.mean(all_widths))
+                severity_label = "Uncalibrated (Px)"
+                is_safe = False 
 
-            # 5. Visualization (Mask + Box + Green Dot)
+            # 6. Visualization
             crack_overlay = np.zeros_like(vis)
             crack_overlay[merged_mask > 0] = [0, 0, 255] 
             vis = cv2.addWeighted(vis, 1.0, crack_overlay, 0.4, 0)
@@ -158,9 +182,11 @@ class CrackDetector:
             cv2.circle(vis, (max_x, max_y), 10, (0, 255, 0), -1) 
             cv2.circle(vis, (max_x, max_y), 15, (255, 255, 255), 2) 
             
-            cv2.putText(vis, f"MAX: {max_w_mm:.2f}mm", (max_x + 20, max_y), 
+            cv2.putText(vis, f"MAX: {max_w:.2f}{unit}", (max_x + 20, max_y), 
                         cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2, cv2.LINE_AA)
-            cv2.rectangle(vis, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 255), 2)
+            
+            if coin_detected:            
+                cv2.rectangle(vis, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 255), 2)
 
             h, w = vis.shape[:2]
             max_width_display = 720
@@ -174,9 +200,11 @@ class CrackDetector:
             return {
                 'mode': 'crack_severity',
                 'crack_detected': True,
-                'max_width': round(max_w_mm, 2), 
-                'avg_width': round(avg_w_mm, 2), 
+                'coin_detected': coin_detected,
+                'max_width': round(max_w, 2), 
+                'avg_width': round(avg_w, 2), 
                 'scale': round(mm_per_pixel, 4),
+                'unit': unit,
                 'severity': severity_label,
                 'is_safe': is_safe,
                 'model_conf': model_conf

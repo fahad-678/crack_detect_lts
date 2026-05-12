@@ -1,130 +1,110 @@
 {% extends 'detector/base.html' %}
+{% load static %}
 
 {% block title %}StructInsight AI | Home{% endblock %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-24 relative z-10">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20 relative z-10">
 
-    <section class="pt-10 fade-in">
-        <div class="text-center max-w-4xl mx-auto mb-16">
-            <div class="inline-flex items-center space-x-2 bg-blue-50 text-blue-600 px-4 py-2 rounded-full border border-blue-200 mb-6 text-sm font-bold tracking-wide shadow-sm">
-                <i class="fas fa-rocket"></i>
-                <span>Powered by YOLOv11</span>
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center fade-in mb-24">
+        
+        <div class="text-center lg:text-left space-y-8 order-2 lg:order-1">
+            
+            <div class="inline-flex items-center space-x-2 bg-blue-50 text-blue-600 px-4 py-2 rounded-full border border-blue-200 text-xs font-bold tracking-widest uppercase shadow-sm">
+                <i class="fas fa-satellite-dish animate-pulse mr-1"></i>
+                <span>YOLOv11 Powered</span>
             </div>
             
-            <h1 class="text-4xl md:text-6xl font-extrabold text-slate-900 mb-6 tracking-tight leading-tight">
-                Structural Assessment,<br>
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500">Elevated by AI.</span>
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.1]">
+                Structural <br class="hidden lg:block"> Assessment, <br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-600 inline-block mt-2">
+                    Elevated by AI.
+                </span>
             </h1>
-            <p class="text-lg md:text-xl text-slate-600 mb-8 leading-relaxed">
-                StructInsight AI transforms how civil engineers monitor structural health. We replace slow, subjective visual inspections with pixel-perfect, automated analysis.
+            
+            <p class="text-lg text-slate-600 leading-relaxed max-w-xl mx-auto lg:mx-0">
+                Transform how you monitor structural health. StructInsight AI replaces slow, subjective visual inspections with pixel-perfect, automated crack analysis and severity classification.
             </p>
-            <div class="flex justify-center gap-4">
-                <a href="{% url 'demo' %}" class="btn-interactive bg-blue-600 text-white px-8 py-3 rounded-xl font-bold shadow-md">
-                    Try the Demo
+            
+            <div class="flex flex-col sm:flex-row justify-center lg:justify-start gap-4 pt-2">
+                <a href="{% url 'demo' %}" class="btn-interactive bg-blue-600 text-white px-8 py-4 rounded-xl font-bold shadow-lg shadow-blue-500/30 flex items-center justify-center space-x-3">
+                    <span>Launch Live Demo</span>
+                    <i class="fas fa-arrow-right text-sm"></i>
                 </a>
-                <a href="{% url 'instructions' %}" class="btn-interactive bg-white text-slate-700 border border-slate-300 px-8 py-3 rounded-xl font-bold shadow-sm hover:bg-slate-50">
-                    How it Works
+                <a href="{% url 'instructions' %}" class="btn-interactive glass text-slate-700 px-8 py-4 rounded-xl font-bold shadow-sm flex items-center justify-center space-x-3 hover:bg-slate-50">
+                    <i class="fas fa-book text-blue-500"></i>
+                    <span>Read Guidelines</span>
                 </a>
+            </div>
+
+            <div class="pt-6 flex items-center justify-center lg:justify-start space-x-6 text-sm text-slate-500 font-medium border-t border-slate-200/60 mt-8">
+                <span class="flex items-center"><i class="fas fa-check-circle text-emerald-500 mr-2"></i> Sub-millimeter Precision</span>
+                <span class="flex items-center"><i class="fas fa-check-circle text-emerald-500 mr-2"></i> ACI 224R-01 Compliant</span>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
+        <div class="relative order-1 lg:order-2 px-6 lg:px-0">
+            <div class="absolute inset-0 bg-gradient-to-tr from-cyan-200 to-blue-200 rounded-[3rem] transform rotate-3 scale-105 opacity-60 blur-xl"></div>
             
-            <div class="glass card-hover p-8 rounded-2xl border-t-4 border-t-red-500">
-                <div class="bg-red-50 w-12 h-12 rounded-lg flex items-center justify-center mb-6 border border-red-100">
-                    <i class="fas fa-clipboard-list text-red-500 text-xl"></i>
-                </div>
-                <h3 class="text-xl font-bold text-slate-900 mb-3">The Traditional Problem</h3>
-                <p class="text-slate-600 text-sm leading-relaxed">
-                    Manual crack inspections are highly subjective, time-consuming, and prone to human error. Scaling these inspections across large infrastructures is dangerous and practically impossible.
-                </p>
-            </div>
+            <div class="absolute inset-0 border-2 border-dashed border-blue-400 rounded-[3rem] transform -rotate-3 scale-105 opacity-30"></div>
 
-            <div class="glass card-hover p-8 rounded-2xl border-t-4 border-t-blue-500 transform md:-translate-y-4 shadow-lg shadow-blue-900/5">
-                <div class="bg-blue-50 w-12 h-12 rounded-lg flex items-center justify-center mb-6 border border-blue-100">
-                    <i class="fas fa-microchip text-blue-600 text-xl"></i>
+            <div class="relative glass p-4 rounded-[2.5rem] shadow-2xl transform transition-transform duration-700 hover:-translate-y-4 hover:rotate-1 group">
+                
+                <div class="absolute top-6 left-6 flex space-x-2 z-20">
+                    <div class="w-3 h-3 rounded-full bg-red-400 shadow-sm"></div>
+                    <div class="w-3 h-3 rounded-full bg-amber-400 shadow-sm"></div>
+                    <div class="w-3 h-3 rounded-full bg-emerald-400 shadow-sm"></div>
                 </div>
-                <h3 class="text-xl font-bold text-slate-900 mb-3">The AI Solution</h3>
-                <p class="text-slate-600 text-sm leading-relaxed">
-                    Powered by the state-of-the-art <strong>YOLOv11</strong> architecture, our system instantly segments cracks at the pixel level, measuring widths via advanced skeletal geometry in milliseconds.
-                </p>
-            </div>
 
-            <div class="glass card-hover p-8 rounded-2xl border-t-4 border-t-emerald-500">
-                <div class="bg-emerald-50 w-12 h-12 rounded-lg flex items-center justify-center mb-6 border border-emerald-100">
-                    <i class="fas fa-ruler-combined text-emerald-600 text-xl"></i>
+                <img src="{% static 'images/logo.jpeg' %}" alt="StructInsight AI System" class="w-full h-auto object-cover rounded-[2rem] border border-slate-100/50 shadow-inner group-hover:scale-[1.02] transition-transform duration-700">
+                
+                <div class="absolute -bottom-6 -right-6 glass px-6 py-4 rounded-2xl shadow-xl flex items-center space-x-4 border-b-4 border-b-emerald-500 animate-bounce" style="animation-duration: 3s;">
+                    <div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-500 font-bold uppercase tracking-wider">System Status</p>
+                        <p class="text-slate-900 font-black">Online & Ready</p>
+                    </div>
                 </div>
-                <h3 class="text-xl font-bold text-slate-900 mb-3">ACI 224R-01 Compliant</h3>
-                <p class="text-slate-600 text-sm leading-relaxed">
-                    AI alone isn't enough. StructInsight AI grounds its results in engineering reality by directly evaluating measured widths against the <strong>American Concrete Institute (ACI) 224R-01</strong> guidelines.
-                </p>
             </div>
         </div>
     </section>
 
-    <!-- <section class="fade-in pb-20" style="animation-delay: 0.2s;">
-        <div class="text-center mb-10">
-            <h2 class="text-3xl font-bold text-slate-900 mb-4">Model Performance</h2>
-            <p class="text-slate-600">Validated metrics from our custom-trained YOLOv11 model.</p>
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-6 fade-in" style="animation-delay: 0.2s;">
+        
+        <div class="glass card-hover p-8 rounded-3xl border border-slate-200 bg-gradient-to-b from-white to-slate-50/50">
+            <div class="w-14 h-14 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center mb-6 shadow-sm border border-red-100">
+                <i class="fas fa-clipboard-list text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-slate-900 mb-3">The Traditional Problem</h3>
+            <p class="text-slate-600 text-sm leading-relaxed">
+                Manual crack inspections are highly subjective, time-consuming, and prone to human error. Scaling these physical inspections across large infrastructures is dangerous and practically impossible.
+            </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            
-            <div class="glass card-hover p-8 rounded-3xl border border-slate-200">
-                <div class="flex items-center mb-6 border-b border-slate-200 pb-4">
-                    <div class="bg-blue-50 p-3 rounded-lg mr-4 border border-blue-100">
-                        <i class="fas fa-crosshairs text-blue-600 text-xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-slate-900 uppercase tracking-wider text-sm">Detection Metrics</h3>
-                </div>
-                
-                <div class="space-y-4">
-                    <div class="flex justify-between items-center bg-white p-3 rounded-lg border border-slate-100 shadow-sm transition-colors hover:border-blue-200">
-                        <span class="text-slate-600 font-medium">Precision</span>
-                        <span class="text-slate-900 font-bold font-mono text-lg">0.9012</span>
-                    </div>
-                    <div class="flex justify-between items-center bg-white p-3 rounded-lg border border-slate-100 shadow-sm transition-colors hover:border-blue-200">
-                        <span class="text-slate-600 font-medium">Recall</span>
-                        <span class="text-slate-900 font-bold font-mono text-lg">0.8191</span>
-                    </div>
-                    <div class="flex justify-between items-center bg-blue-50 p-3 rounded-lg border-l-4 border-l-blue-500 border border-blue-100 shadow-sm">
-                        <span class="text-blue-700 font-medium">F1 Score</span>
-                        <span class="text-slate-900 font-bold font-mono text-lg">0.8582</span>
-                    </div>
-                    <div class="flex justify-between items-center bg-white p-3 rounded-lg border border-slate-100 shadow-sm transition-colors hover:border-blue-200">
-                        <span class="text-slate-600 font-medium">mAP50</span>
-                        <span class="text-slate-900 font-bold font-mono text-lg">0.8762</span>
-                    </div>
-                </div>
+        <div class="glass card-hover p-8 rounded-3xl border-2 border-blue-100 bg-gradient-to-b from-blue-50/50 to-white transform md:-translate-y-4 shadow-xl shadow-blue-900/5 relative overflow-hidden">
+            <div class="absolute top-0 right-0 bg-blue-500 text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-bl-xl shadow-sm">Core Engine</div>
+            <div class="w-14 h-14 bg-blue-600 text-white rounded-2xl flex items-center justify-center mb-6 shadow-md shadow-blue-500/30">
+                <i class="fas fa-microchip text-2xl"></i>
             </div>
-
-            <div class="glass card-hover p-8 rounded-3xl border border-slate-200">
-                <div class="flex items-center mb-6 border-b border-slate-200 pb-4">
-                    <div class="bg-emerald-50 p-3 rounded-lg mr-4 border border-emerald-100">
-                        <i class="fas fa-draw-polygon text-emerald-600 text-xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-slate-900 uppercase tracking-wider text-sm">Segmentation Metrics</h3>
-                </div>
-                
-                <div class="space-y-4">
-                    <div class="flex justify-between items-center bg-white p-3 rounded-lg border border-slate-100 shadow-sm transition-colors hover:border-emerald-200">
-                        <span class="text-slate-600 font-medium">Seg mAP50</span>
-                        <span class="text-slate-900 font-bold font-mono text-lg">0.6504</span>
-                    </div>
-                    <div class="flex justify-between items-center bg-emerald-50 p-3 rounded-lg border-l-4 border-l-emerald-500 border border-emerald-100 shadow-sm">
-                        <span class="text-emerald-700 font-medium">IoU (Intersection over Union)</span>
-                        <span class="text-slate-900 font-bold font-mono text-lg">0.6504</span>
-                    </div>
-                    <div class="flex justify-between items-center bg-cyan-50 p-3 rounded-lg border-l-4 border-l-cyan-500 border border-cyan-100 shadow-sm">
-                        <span class="text-cyan-700 font-medium">Dice Score</span>
-                        <span class="text-slate-900 font-bold font-mono text-lg">0.7882</span>
-                    </div>
-                </div>
-            </div>
-
+            <h3 class="text-xl font-bold text-slate-900 mb-3">The AI Solution</h3>
+            <p class="text-slate-600 text-sm leading-relaxed">
+                Powered by the state-of-the-art <strong>YOLOv11</strong> architecture, our system instantly segments cracks at the pixel level, measuring widths via advanced skeletal geometry in milliseconds.
+            </p>
         </div>
-    </section> -->
+
+        <div class="glass card-hover p-8 rounded-3xl border border-slate-200 bg-gradient-to-b from-white to-emerald-50/30">
+            <div class="w-14 h-14 bg-emerald-50 text-emerald-500 rounded-2xl flex items-center justify-center mb-6 shadow-sm border border-emerald-100">
+                <i class="fas fa-ruler-combined text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-slate-900 mb-3">ACI 224R-01 Compliant</h3>
+            <p class="text-slate-600 text-sm leading-relaxed">
+                AI alone isn't enough. StructInsight AI grounds its results in engineering reality by directly evaluating measured crack widths against the <strong>American Concrete Institute</strong> guidelines.
+            </p>
+        </div>
+        
+    </section>
 
 </div>
 {% endblock %}

@@ -56,24 +56,22 @@
             </label>
         </div>
 
-        <section
-            class="glass rounded-2xl p-6 shadow-sm grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 border-t-4 border-t-slate-300">
+        <section class="glass rounded-2xl p-6 shadow-sm grid grid-cols-1 md:grid-cols-4 gap-6 mb-8 border-t-4 border-t-slate-300">
             <div>
-                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Confidence Threshold (<span
-                        id="conf-val">0.25</span>)</label>
-                <input type="range" id="conf-input" min="0.05" max="1.0" step="0.05" value="0.25"
-                    class="w-full mt-2 accent-cyan-500 cursor-pointer">
+                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Confidence Threshold (<span id="conf-val">0.25</span>)</label>
+                <input type="range" id="conf-input" min="0.05" max="1.0" step="0.05" value="0.25" class="w-full mt-2 accent-cyan-500 cursor-pointer">
             </div>
             <div>
-                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">IOU Threshold (<span
-                        id="iou-val">0.50</span>)</label>
-                <input type="range" id="iou-input" min="0.05" max="1.0" step="0.05" value="0.50"
-                    class="w-full mt-2 accent-cyan-500 cursor-pointer">
+                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">IOU Threshold (<span id="iou-val">0.50</span>)</label>
+                <input type="range" id="iou-input" min="0.05" max="1.0" step="0.05" value="0.50" class="w-full mt-2 accent-cyan-500 cursor-pointer">
             </div>
             <div id="coin-setting-container" class="opacity-40 pointer-events-none transition-opacity duration-300">
                 <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Reference Coin (mm)</label>
-                <input type="number" id="coin-input" step="0.1" value="18.5" disabled
-                    class="w-full bg-white border border-slate-300 text-slate-900 rounded-lg p-2 mt-1 input-interactive shadow-sm">
+                <input type="number" id="coin-input" step="0.1" value="18.5" disabled class="w-full bg-white border border-slate-300 text-slate-900 rounded-lg p-2 mt-1 input-interactive shadow-sm disabled:bg-slate-100 disabled:text-slate-400">
+            </div>
+            <div id="mult-setting-container" class="opacity-40 pointer-events-none transition-opacity duration-300">
+                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Width Multiplier (<span id="mult-val">0.90</span>)</label>
+                <input type="range" id="mult-input" min="0.10" max="1.00" step="0.01" value="0.90" disabled class="w-full mt-2 accent-cyan-500 cursor-pointer disabled:cursor-not-allowed">
             </div>
         </section>
 
@@ -121,21 +119,32 @@
     const iouVal = document.getElementById('iou-val');
     const coinInput = document.getElementById('coin-input');
     const coinContainer = document.getElementById('coin-setting-container');
+    
+    // NEW Constants for Multiplier
+    const multInput = document.getElementById('mult-input');
+    const multVal = document.getElementById('mult-val');
+    const multContainer = document.getElementById('mult-setting-container');
+
     const excelBtn = document.getElementById('download-excel-btn');
     const pdfBtn = document.getElementById('download-pdf-btn');
     const modeRadios = document.querySelectorAll('input[name="analysis_mode"]');
 
     confInput.addEventListener('input', (e) => confVal.innerText = parseFloat(e.target.value).toFixed(2));
     iouInput.addEventListener('input', (e) => iouVal.innerText = parseFloat(e.target.value).toFixed(2));
+    multInput.addEventListener('input', (e) => multVal.innerText = parseFloat(e.target.value).toFixed(2));
 
     modeRadios.forEach(radio => {
         radio.addEventListener('change', (e) => {
             if (e.target.value === 'crack_severity') {
                 coinContainer.classList.remove('opacity-40', 'pointer-events-none');
                 coinInput.disabled = false;
+                multContainer.classList.remove('opacity-40', 'pointer-events-none');
+                multInput.disabled = false;
             } else {
                 coinContainer.classList.add('opacity-40', 'pointer-events-none');
                 coinInput.disabled = true;
+                multContainer.classList.add('opacity-40', 'pointer-events-none');
+                multInput.disabled = true;
             }
         });
     });
@@ -176,32 +185,75 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    const maxWidth = parseFloat(data.data.max_width || 0);
-                    const calibratedWidth = (maxWidth * 0.9).toFixed(2);
+                    const mode = data.data.mode;
+                    const crackDetected = data.data.crack_detected;
+                    const coinDetected = data.data.coin_detected;
+                    const unit = data.data.unit || "mm";
+                    const modelConfStr = data.data.model_conf ? (data.data.model_conf * 100).toFixed(1) + '%' : 'N/A';
 
+                    let severity = data.data.severity || "N/A";
                     let recText = "";
                     let actions = "";
-                    if (data.data.mode === 'crack_only') {
-                        recText = data.data.crack_detected ? "Re-run with Severity mode." : "No action required.";
+                    let calibratedWidth = "0.00";
+                    let maxWidth = "0.00";
+                    let statusLabel = "";
+
+                    // LOGIC FOR "NO CRACK"
+                    if (!crackDetected) {
+                        statusLabel = "NO - Clear";
+                        severity = "Clear";
+                        if (mode === 'crack_only') {
+                            recText = "No action required.";
+                            actions = "None";
+                        } else {
+                            if (coinDetected) {
+                                recText = "Coin detected, but surface is clear.";
+                                actions = "None";
+                            } else {
+                                recText = "Neither crack nor reference coin detected.";
+                                actions = "Upload valid image";
+                            }
+                        }
                     } else {
-                        if (maxWidth < 0.10) { recText = "Routine monitoring."; actions = "Inspection only"; }
-                        else if (maxWidth <= 0.30) { recText = "Seal and monitor."; actions = "Surface sealing, epoxy fillers"; }
-                        else if (maxWidth <= 0.50) { recText = "Consult engineer."; actions = "Epoxy injection, waterproofing"; }
-                        else { recText = "Immediate assessment."; actions = "Grouting, stitching, strengthening"; }
+                        // LOGIC FOR "CRACK DETECTED"
+                        statusLabel = "YES - Detected";
+                        maxWidth = parseFloat(data.data.max_width || 0).toFixed(2);
+                        const currentMult = parseFloat(multInput.value);
+                        calibratedWidth = (parseFloat(maxWidth) * currentMult).toFixed(2);
+                        
+                        if (mode === 'crack_only') {
+                            recText = "Re-run with Severity mode for classification.";
+                            actions = "Quantitative Analysis Recommended";
+                            severity = "Unmeasured";
+                        } else {
+                            if (coinDetected) {
+                                const finalWidth = parseFloat(calibratedWidth);
+                                if (finalWidth < 0.10) { severity = "Hairline crack"; recText = "Routine monitoring."; actions = "Inspection only"; }
+                                else if (finalWidth <= 0.30) { severity = "Fine / Minor"; recText = "Seal and monitor."; actions = "Surface sealing, epoxy fillers"; }
+                                else if (finalWidth <= 0.50) { severity = "Moderate"; recText = "Consult engineer."; actions = "Epoxy injection, waterproofing"; }
+                                else { severity = "Severe"; recText = "Immediate assessment."; actions = "Grouting, stitching, strengthening"; }
+                            } else {
+                                severity = "Uncalibrated (Px)";
+                                recText = "Reference coin missing. Width calculated in pixels.";
+                                actions = "Re-upload with a visible reference coin.";
+                            }
+                        }
                     }
+                    data.data.severity = severity;
 
-                    updateCardWithResult(cardElement, data, currentConf, currentIou, calibratedWidth, recText, actions);
+                    updateCardWithResult(cardElement, data, currentConf, currentIou, calibratedWidth, recText, actions, parseFloat(multInput.value));
 
+                    // Push the extended data to the array for Exporting
                     globalResultsData.push({
                         filename: data.filename,
-                        max_width: maxWidth,
-                        avg_width: data.data.avg_width || "N/A",
-                        scale: data.data.scale || "N/A",
-                        calibrated_width: calibratedWidth,
-                        severity: data.data.severity || "N/A",
+                        mode_display: mode === 'crack_only' ? 'Detection Only' : 'Severity Analysis',
+                        status: statusLabel,
+                        severity: severity,
+                        model_conf: modelConfStr,
+                        max_width: mode === 'crack_only' ? 'N/A' : maxWidth + unit,
+                        calibrated_width: mode === 'crack_only' ? 'N/A' : calibratedWidth + unit,
                         recommendation: recText,
-                        actions: actions,
-                        result_url: data.result_url
+                        actions: actions
                     });
                 } else {
                     updateCardWithError(cardElement, data.error);
@@ -219,45 +271,145 @@
         }
     });
 
-    // EXCEL EXPORT
+    // =======================================================
+    // EXCEL EXPORT (Beautifully Formatted)
+    // =======================================================
     document.getElementById('download-excel-btn').addEventListener('click', () => {
-        const worksheet = XLSX.utils.json_to_sheet(globalResultsData.map(item => ({
-            "File Name": item.filename,
-            "Max Width (mm)": item.max_width,
-            "Avg Width (mm)": item.avg_width,
-            "Scale (px/mm)": item.scale,
-            "Calibrated Width (mm)": item.calibrated_width,
-            "Severity": item.severity,
-            "Recommendation": item.recommendation,
-            "Actions": item.actions
-        })));
+        const reportData = [
+            ["StructInsight AI - Structural Analysis Report"],
+            [`Generated on: ${new Date().toLocaleString()}`],
+            [],
+            ["File Name", "Mode", "Detection Status", "Severity", "Model Conf.", "Max Width", "Calibrated Width", "Recommendation", "Suggested Actions"]
+        ];
+
+        globalResultsData.forEach(item => {
+            reportData.push([
+                item.filename,
+                item.mode_display,
+                item.status,
+                item.severity,
+                item.model_conf,
+                item.max_width,
+                item.calibrated_width,
+                item.recommendation,
+                item.actions
+            ]);
+        });
+
+        reportData.push([]);
+        reportData.push([]);
+        reportData.push(["*** StructInsight AI System - Automated Structural Assessment ***"]);
+
+        const worksheet = XLSX.utils.aoa_to_sheet(reportData);
+        worksheet['!cols'] = [
+            { wch: 30 }, // File Name
+            { wch: 18 }, // Mode
+            { wch: 18 }, // Status
+            { wch: 18 }, // Severity
+            { wch: 12 }, // Conf
+            { wch: 12 }, // Max Width
+            { wch: 16 }, // Calibrated
+            { wch: 45 }, // Recommendation
+            { wch: 40 }  // Actions
+        ];
+
         const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Crack Analysis");
-        XLSX.writeFile(workbook, `Concrete_Crack_Detection_AI_Report_${Date.now()}.xlsx`);
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Analysis Report");
+        XLSX.writeFile(workbook, `StructInsight_Report_${Date.now()}.xlsx`);
     });
 
-    // PDF EXPORT
+    // =======================================================
+    // PDF EXPORT (Branded with Logo & Footer)
+    // =======================================================
     document.getElementById('download-pdf-btn').addEventListener('click', async () => {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF('l', 'mm', 'a4');
-        doc.setFillColor(248, 250, 252);
-        doc.rect(0, 0, 297, 40, 'F');
-        doc.setTextColor(15, 23, 42);
-        doc.setFontSize(22);
-        doc.text("StructInsight AI Structural Analysis Report", 14, 20);
+
+        const logoImg = document.querySelector('nav img');
+        let logoDataUrl = null;
+        if (logoImg) {
+            const canvas = document.createElement('canvas');
+            canvas.width = logoImg.naturalWidth || logoImg.width;
+            canvas.height = logoImg.naturalHeight || logoImg.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(logoImg, 0, 0);
+            logoDataUrl = canvas.toDataURL('image/jpeg');
+        }
+
+        doc.setFillColor(37, 99, 235);
+        doc.rect(0, 0, 297, 35, 'F');
+
+        if (logoDataUrl) {
+            doc.addImage(logoDataUrl, 'JPEG', 14, 5, 25, 25);
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(22);
+            doc.setFont("helvetica", "bold");
+            doc.text("StructInsight AI", 45, 17);
+            doc.setFontSize(12);
+            doc.setFont("helvetica", "normal");
+            doc.text("Structural Assessment & Detection Report", 45, 25);
+        } else {
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(22);
+            doc.text("StructInsight AI Structural Analysis Report", 14, 22);
+        }
+
         doc.setFontSize(10);
         doc.setTextColor(100, 116, 139);
-        doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 30);
+        doc.text(`Generated Date: ${new Date().toLocaleString()}`, 14, 45);
 
         doc.autoTable({
-            startY: 45,
-            head: [['File', 'Max(mm)', 'Calibrated(mm)', 'Severity', 'Recommendation']],
-            body: globalResultsData.map(i => [i.filename, i.max_width, i.calibrated_width, i.severity, i.recommendation]),
-            theme: 'striped',
-            headStyles: { fillColor: [37, 99, 235], textColor: [255, 255, 255] },
-            styles: { textColor: [51, 65, 85] }
+            startY: 50,
+            head: [['File Name', 'Mode', 'Status', 'Severity', 'Conf.', 'Calibrated', 'Recommendation']],
+            body: globalResultsData.map(i => [
+                i.filename, 
+                i.mode_display,
+                i.status,
+                i.severity,
+                i.model_conf,
+                i.calibrated_width, 
+                i.recommendation
+            ]),
+            theme: 'grid',
+            headStyles: { fillColor: [37, 99, 235], textColor: [255, 255, 255], fontStyle: 'bold' },
+            alternateRowStyles: { fillColor: [248, 250, 252] },
+            styles: { textColor: [51, 65, 85], fontSize: 9, cellPadding: 3, valign: 'middle' },
+            columnStyles: {
+                0: { cellWidth: 35 }, 
+                1: { cellWidth: 25 },
+                2: { cellWidth: 25, fontStyle: 'bold' }, 
+                6: { cellWidth: 60 }  
+            },
+            // Color Logic Hook
+            didParseCell: function(data) {
+                if (data.section === 'body') {
+                    // Check Status Column (Index 2)
+                    if (data.column.index === 2) {
+                        if (data.cell.raw.includes('YES')) {
+                            data.cell.styles.textColor = [220, 38, 38]; // Red
+                        } else if (data.cell.raw.includes('NO')) {
+                            data.cell.styles.textColor = [5, 150, 105]; // Green
+                        }
+                    }
+                    // Optional: Make "Severe" red in the Severity column
+                    if (data.column.index === 3 && data.cell.raw === 'Severe') {
+                        data.cell.styles.textColor = [220, 38, 38];
+                    }
+                }
+            },
+            didDrawPage: function (data) {
+                const footerY = doc.internal.pageSize.height - 10;
+                doc.setDrawColor(200, 200, 200);
+                doc.line(data.settings.margin.left, footerY - 5, doc.internal.pageSize.width - data.settings.margin.right, footerY - 5);
+                doc.setFontSize(8);
+                doc.setTextColor(150, 150, 150);
+                doc.text("StructInsight AI System - ACI 224R-01 Compliant Assessment", data.settings.margin.left, footerY);
+                const pageStr = "Page " + doc.internal.getNumberOfPages();
+                doc.text(pageStr, doc.internal.pageSize.width - data.settings.margin.right - 10, footerY);
+            }
         });
-        doc.save(`Concrete_Crack_Detection_AI_Report.pdf`);
+
+        doc.save(`StructInsight_AI_Report_${Date.now()}.pdf`);
     });
 
     // DYNAMIC UI INJECTION
@@ -271,50 +423,74 @@
         </div>`;
     }
 
-    function updateCardWithResult(card, data, conf, iou, calibrated, rec, actions) {
+    function updateCardWithResult(card, data, conf, iou, calibrated, rec, actions, currentMult) {
         card.className = "glass rounded-2xl p-6 fade-in border-l-4 border-emerald-500 shadow-lg mb-6 card-hover";
 
         let statsHtml = '';
         let recommendationHtml = '';
         
-        // Grab the model's actual confidence returned from the backend (or fallback to N/A)
         const modelConf = data.data.model_conf ? (data.data.model_conf * 100).toFixed(1) + '%' : 'N/A';
+        const unit = data.data.unit || 'mm';
+        const isPixelMode = data.data.mode === 'crack_severity' && data.data.crack_detected && !data.data.coin_detected;
+        const pixelWarning = isPixelMode ? '<div class="text-[10px] text-red-500 font-bold uppercase mt-1 text-center w-full">⚠️ No Coin</div>' : '';
 
-        if (data.data.mode === 'crack_only') {
-            const detected = data.data.crack_detected;
-            const statusColor = detected ? 'text-red-600' : 'text-emerald-600';
-            const bgColor = detected ? 'bg-red-50' : 'bg-emerald-50';
-            const borderColor = detected ? 'border-red-200' : 'border-emerald-200';
+        // NO CRACK FOUND (Works for both modes)
+        if (!data.data.crack_detected) {
+            const statusColor = 'text-emerald-600';
+            const bgColor = 'bg-emerald-50';
+            const borderColor = 'border-emerald-200';
+            let statusText = 'NO - Surface Clear';
+            
+            if (data.data.mode === 'crack_severity' && data.data.coin_detected === false) {
+                statusText = 'NO CRACK & NO COIN';
+            }
 
             statsHtml = `
             <div class="col-span-full md:col-span-2 ${bgColor} p-6 rounded-xl border ${borderColor} text-center flex flex-col justify-center shadow-sm">
                 <p class="text-slate-600 text-xs uppercase font-bold mb-2">Detection Status</p>
-                <p class="text-2xl font-extrabold ${statusColor}">${detected ? 'YES - Crack Detected' : 'NO - Surface Clear'}</p>
+                <p class="text-2xl font-extrabold ${statusColor}">${statusText}</p>
             </div>
             <div class="col-span-full md:col-span-2 bg-white p-4 rounded-xl border border-slate-200 text-center shadow-sm flex flex-col justify-center">
                 <p class="text-cyan-600 text-[10px] uppercase font-bold mb-1">Model Detection Confidence</p>
                 <p class="text-2xl font-bold text-slate-900">${modelConf}</p>
             </div>
-        `;
-        } else {
+            `;
+        } 
+        // CRACK DETECTED - CRACK ONLY MODE
+        else if (data.data.mode === 'crack_only') {
             statsHtml = `
-            <div class="bg-white p-4 rounded-xl border border-slate-200 text-center shadow-sm">
-                <p class="text-emerald-600 text-[10px] uppercase font-bold mb-1">Calibrated Width (Max Width * 0.9)</p>
-                <p class="text-xl font-bold text-slate-900">${calibrated}<span class="text-xs ml-1 text-slate-500">mm</span></p>
+            <div class="col-span-full md:col-span-2 bg-red-50 p-6 rounded-xl border border-red-200 text-center flex flex-col justify-center shadow-sm">
+                <p class="text-slate-600 text-xs uppercase font-bold mb-2">Detection Status</p>
+                <p class="text-2xl font-extrabold text-red-600">YES - Crack Detected</p>
             </div>
-            <div class="bg-white p-4 rounded-xl border border-slate-200 text-center shadow-sm">
+            <div class="col-span-full md:col-span-2 bg-white p-4 rounded-xl border border-slate-200 text-center shadow-sm flex flex-col justify-center">
+                <p class="text-cyan-600 text-[10px] uppercase font-bold mb-1">Model Detection Confidence</p>
+                <p class="text-2xl font-bold text-slate-900">${modelConf}</p>
+            </div>
+            `;
+        } 
+        // CRACK DETECTED - SEVERITY MODE
+        else {
+            statsHtml = `
+            <div class="bg-white p-4 rounded-xl border border-slate-200 text-center shadow-sm flex flex-col justify-center">
+                <p class="text-emerald-600 text-[10px] uppercase font-bold mb-1">Calibrated Width (×${currentMult.toFixed(2)})</p>
+                <p class="text-xl font-bold text-slate-900">${calibrated}<span class="text-xs ml-1 text-slate-500">${unit}</span></p>
+                ${pixelWarning}
+            </div>
+            <div class="bg-white p-4 rounded-xl border border-slate-200 text-center shadow-sm flex flex-col justify-center">
                 <p class="text-slate-500 text-[10px] uppercase font-bold mb-1">Max Width</p>
-                <p class="text-xl font-bold text-slate-900">${data.data.max_width}<span class="text-xs ml-1 text-slate-500">mm</span></p>
+                <p class="text-xl font-bold text-slate-900">${data.data.max_width}<span class="text-xs ml-1 text-slate-500">${unit}</span></p>
+                ${pixelWarning}
             </div>
-            <div class="bg-white p-4 rounded-xl border border-slate-200 text-center shadow-sm">
+            <div class="bg-white p-4 rounded-xl border border-slate-200 text-center shadow-sm flex flex-col justify-center">
                 <p class="text-slate-500 text-[10px] uppercase font-bold mb-1">Classification</p>
                 <p class="text-sm font-bold text-blue-600">${data.data.severity}</p>
             </div>
-            <div class="bg-white p-4 rounded-xl border border-slate-200 text-center shadow-sm">
+            <div class="bg-white p-4 rounded-xl border border-slate-200 text-center shadow-sm flex flex-col justify-center">
                 <p class="text-cyan-600 text-[10px] uppercase font-bold mb-1">Model Confidence</p>
                 <p class="text-sm font-bold text-slate-900">${modelConf}</p>
             </div>
-        `;
+            `;
         }
 
         recommendationHtml = `
@@ -325,11 +501,8 @@
             </div>
             <p class="text-slate-700 font-medium text-sm leading-relaxed mb-2">${rec}</p>
             ${actions ? `<div class="text-xs text-blue-800 bg-blue-100 p-2 rounded border border-blue-200"><strong>Suggested Actions:</strong> ${actions}</div>` : ''}
-            <div class="mt-4 pt-4 border-t border-slate-200 text-[10px] text-slate-500 italic">
-                Note: Appropriate repair techniques should be selected based on crack width, exposure conditions, and structural importance.
-            </div>
         </div>
-    `;
+        `;
 
         card.innerHTML = `
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
